@@ -167,21 +167,29 @@ function renderRecipes(recipes) {
     grid.innerHTML = '';
     const t = translations[state.lang];
 
-    if (recipes.length === 0) {
-        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px;">${t.noRecipe}</p>`;
+    if (!recipes || recipes.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px; font-weight: 600;">${t.noRecipe}</p>`;
         return;
     }
 
-    recipes.forEach(recipe => {
+    // AI might return recipes in a different property, handle all cases
+    const recipeList = Array.isArray(recipes) ? recipes : (recipes.recipes || []);
+
+    recipeList.forEach(recipe => {
         const card = document.createElement('div');
         card.className = 'recipe-card';
+        
+        const name = typeof recipe.name === 'string' ? recipe.name : (recipe.name?.[state.lang] || '');
+        const time = typeof recipe.time === 'string' ? recipe.time : (recipe.time?.[state.lang] || '');
+        const diff = typeof recipe.difficulty === 'string' ? recipe.difficulty : (recipe.difficulty?.[state.lang] || '');
+
         card.innerHTML = `
-            <div class="recipe-img">${recipe.emoji}</div>
+            <div class="recipe-img">${recipe.emoji || '🥘'}</div>
             <div class="recipe-info">
-                <h3>${typeof recipe.name === 'string' ? recipe.name : recipe.name[state.lang]}</h3>
-                <div class="recipe-meta">
-                    <span>⏱ ${typeof recipe.time === 'string' ? recipe.time : recipe.time[state.lang]}</span>
-                    <span>📊 ${typeof recipe.difficulty === 'string' ? recipe.difficulty : recipe.difficulty[state.lang]}</span>
+                <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 8px;">${name}</h3>
+                <div class="recipe-meta" style="font-weight: 600;">
+                    <span>⏱ ${time}</span>
+                    <span>📊 ${diff}</span>
                 </div>
             </div>
         `;
@@ -189,11 +197,11 @@ function renderRecipes(recipes) {
         grid.appendChild(card);
     });
 
-    // Add logo3.png at the end of results
-    const brandImg = document.createElement('img');
-    brandImg.src = 'assets/images/logo3.png';
-    brandImg.className = 'result-direction-logo';
-    grid.appendChild(brandImg);
+    // Add Logo3.png at the end for branding
+    const footerLogo = document.createElement('img');
+    footerLogo.src = 'assets/images/logo3.png';
+    footerLogo.className = 'result-direction-logo';
+    grid.appendChild(footerLogo);
 }
 
 function showRecipeDetail(recipe) {
