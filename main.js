@@ -112,33 +112,28 @@ async function findRecipes() {
     `;
     navigateTo('recipe-section');
 
-    const minimumDelay = 10000;
-
     try {
-        // Backend HTTP Trigger URL (Updated to actual deployed URL)
-        const response = await fetch('https://getairecommendations-us-central1-fridge-raider-bc871.cloudfunctions.net/getAIRecommendations', {
+        // 최신 배포된 Backend URL
+        const response = await fetch('https://us-central1-fridge-raider-bc871.cloudfunctions.net/getRecipes', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 ingredients: state.ingredients,
-                category: state.selectedCuisine,
-                lang: state.lang
+                category: state.selectedCuisine
             })
         });
 
         const result = await response.json();
         
-        // Ensure minimum 10s delay
-        const elapsedTime = Date.now() - Date.now(); // Simulation, real delay handled by await
-        await new Promise(resolve => setTimeout(resolve, Math.max(0, minimumDelay - elapsedTime)));
-
-        if (result.success && result.recipes) {
-            renderRecipes(result.recipes);
+        // Firebase Functions v2 응답은 { data: { recipes: [...] } } 구조임
+        if (result.data && result.data.recipes) {
+            renderRecipes(result.data.recipes);
         } else {
             throw new Error('AI Response Error');
         }
     } catch (error) {
         console.error("AI Error:", error);
+        // 에러 발생 시 로컬 더미 데이터 사용 (fallback)
         const filtered = RECIPES.filter(recipe => recipe.cuisine === state.selectedCuisine);
         renderRecipes(filtered);
     }
@@ -158,19 +153,14 @@ function renderRecipes(recipes) {
         const card = document.createElement('div');
         card.className = 'recipe-card';
         
-        // Backend uses 'title' and 'time', match accordingly
         const title = recipe.title || recipe.name || '';
-        const time = recipe.time || '';
-        const diff = recipe.difficulty || (state.lang === 'ko' ? '보통' : 'Medium');
+        const reason = recipe.reason || '';
 
         card.innerHTML = `
-            <div class="recipe-img">${recipe.emoji || '🥘'}</div>
+            <div class="recipe-img">🥘</div>
             <div class="recipe-info">
-                <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 8px;">${title}</h3>
-                <div class="recipe-meta" style="font-weight: 600;">
-                    <span>⏱ ${time}${state.lang === 'ko' && !time.includes('분') ? '분' : ''}</span>
-                    <span>📊 ${diff}</span>
-                </div>
+                <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; color: var(--primary-dark);">${title}</h3>
+                <p style="font-size: 0.95rem; color: #666; font-weight: 600; line-height: 1.4;">${reason}</p>
             </div>
         `;
         card.onclick = () => showRecipeDetail(recipe);
@@ -189,32 +179,35 @@ function showRecipeDetail(recipe) {
     const body = document.getElementById('modal-body');
     
     const title = recipe.title || recipe.name || '';
-    const time = recipe.time || '';
-    const diff = recipe.difficulty || (state.lang === 'ko' ? '보통' : 'Medium');
+    const reason = recipe.reason || '';
     const ingredients = recipe.ingredients_needed || recipe.ingredients || [];
-    const steps = recipe.instructions || recipe.steps || [];
-    const note = recipe.missing_ingredients_note || '';
+    const youtubeLink = recipe.youtube_search_link || '';
+    const googleKeyword = recipe.google_search_keyword || '';
 
     body.innerHTML = `
         <div style="padding: 20px;">
-            <h2 style="font-size: 2rem; margin-bottom: 10px; font-weight: 800;">${recipe.emoji || '🥘'} ${title}</h2>
-            <div style="margin-bottom: 25px; color: #666; font-weight: 600;">
-                <p>⏱ ${time}${state.lang === 'ko' && !time.includes('분') ? '분' : ''} | 📊 ${diff}</p>
-            </div>
+            <h2 style="font-size: 1.8rem; margin-bottom: 15px; font-weight: 800; color: var(--primary-dark);">🥘 ${title}</h2>
             
-            ${note ? `<p style="background: var(--accent); padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; color: oklch(0.4 0.1 60);">💡 ${note}</p>` : ''}
+            <p style="background: var(--accent); padding: 15px 20px; border-radius: 16px; margin-bottom: 25px; font-weight: 600; color: oklch(0.3 0.1 60); line-height: 1.6;">
+                <span style="display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; opacity: 0.7;">추천 사유</span>
+                ${reason}
+            </p>
 
-            <div style="background: oklch(0.98 0.01 100); padding: 20px; border-radius: 20px; margin-bottom: 25px; border: 1px solid rgba(0,0,0,0.05);">
+            <div style="background: oklch(0.98 0.01 100); padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.05);">
                 <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.ingredientsTitle}</h4>
                 <div style="display: flex; flex-wrap: wrap; gap: 8px;">
                     ${ingredients.map(ing => `<span style="padding: 6px 12px; border-radius: 50px; font-size: 0.9rem; background: white; color: #444; border: 1px solid rgba(0,0,0,0.05); font-weight: 600;">${ing}</span>`).join('')}
                 </div>
             </div>
 
-            <h3 style="margin-bottom: 15px; border-bottom: 3px solid var(--primary); display: inline-block; font-weight: 800;">${t.stepsTitle}</h3>
-            <ol style="padding-left: 20px;">
-                ${steps.map(step => `<li style="margin-bottom: 12px; line-height: 1.6; font-size: 1rem; color: #333; padding-left: 5px;">${step}</li>`).join('')}
-            </ol>
+            <div class="search-actions" style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+                <a href="${youtubeLink}" target="_blank" class="youtube-btn" style="text-decoration: none;">
+                    <span style="font-size: 1.2rem;">📺</span> 유튜브에서 레시피 영상 보기
+                </a>
+                <a href="https://www.google.com/search?q=${encodeURIComponent(googleKeyword)}" target="_blank" class="google-btn" style="text-decoration: none;">
+                    <span style="font-size: 1.2rem;">🔍</span> 구글에서 상세 레시피 검색
+                </a>
+            </div>
         </div>
     `;
     modal.showModal();

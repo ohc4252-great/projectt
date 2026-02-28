@@ -296,29 +296,84 @@ header h1 {
     border: 1px dashed oklch(0.8 0.1 60);
 }
 
-/* Loading & Results */
-.loading-container {
-    text-align: center;
-    padding: 60px 20px;
-}
-
-.loading-video-wrapper {
+/* Search Action Buttons in Modal */
+.search-actions a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
     width: 100%;
-    max-width: 320px;
-    margin: 0 auto 30px;
-    border-radius: 40px;
+}
+
+.youtube-btn {
+    background: #FF0000;
+    color: white;
+    box-shadow: 0 8px 20px rgba(255, 0, 0, 0.2);
+}
+
+.youtube-btn:hover {
+    background: #CC0000;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(255, 0, 0, 0.3);
+}
+
+.google-btn {
+    background: #4285F4;
+    color: white;
+    box-shadow: 0 8px 20px rgba(66, 133, 244, 0.2);
+}
+
+.google-btn:hover {
+    background: #3367D6;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(66, 133, 244, 0.3);
+}
+
+/* Recipe Card Styling Update */
+.recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.recipe-card {
+    background: white;
+    border-radius: var(--radius-md);
     overflow: hidden;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
 }
 
-.result-direction-logo {
-    width: 120px;
-    margin: 60px auto 20px;
-    display: block;
-    opacity: 0.6;
+.recipe-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
 }
 
-/* Footer */
+.recipe-img {
+    height: 160px;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+}
+
+.recipe-info {
+    padding: 20px;
+    flex: 1;
+}
+
+/* Footer & Responsive */
 footer {
     margin-top: 100px;
     padding: 60px 20px;
@@ -341,4 +396,46 @@ footer {
     .cuisine-card .label { font-size: 1.8rem; }
     .action-bar { flex-direction: column; }
     .primary-btn, .secondary-btn { width: 100%; }
+    /* 레시피 카드 큼직하게 만들기 */
+.recipe-grid {
+    display: flex;
+    flex-direction: column; /* 세로로 땅 땅 땅 배치 */
+    gap: 20px;
 }
+
+.large-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.large-card:hover {
+    transform: translateY(-5px); /* 마우스 올리면 살짝 위로 떠오르는 효과 */
+}
+
+/* 버튼 스타일 (유튜브/구글) */
+.card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.link-btn {
+    flex: 1; /* 버튼 반반씩 꽉 채우기 */
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    color: white;
+}
+
+.youtube-btn { background-color: #FF0000; }
+.youtube-btn:hover { background-color: #CC0000; }
+
+.google-btn { background-color: #4285F4; }
+.google-btn:hover { background-color: #3367D6; }
+}
+
