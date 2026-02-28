@@ -16,45 +16,27 @@ const sections = {
     recipe: document.getElementById('recipe-section')
 };
 
-const appNameElements = document.querySelectorAll('.app-name');
-const taglineElement = document.getElementById('tagline');
-const step1Title = document.querySelector('#cuisine-section .section-title');
-const step2Title = document.querySelector('#ingredient-section .section-title');
-const step3Title = document.querySelector('#recipe-section .section-title');
-const selectedCuisinePrefix = document.getElementById('selected-cuisine-prefix');
-const selectedCuisineDisplay = document.getElementById('selected-cuisine-display');
-const ingredientInput = document.getElementById('ingredient-input');
-const addIngredientBtn = document.getElementById('add-ingredient-btn');
-const ingredientTagsContainer = document.getElementById('ingredient-tags');
-const findRecipeBtn = document.getElementById('find-recipe-btn');
-const backToCuisineBtn = document.getElementById('back-to-cuisine');
-const recipeGrid = document.getElementById('recipe-grid');
-const restartBtn = document.getElementById('restart-btn');
-const recipeModal = document.getElementById('recipe-modal');
-const modalBody = document.getElementById('modal-body');
-const closeModalBtn = document.getElementById('close-modal');
-const langToggle = document.getElementById('lang-toggle');
-const aboutLink = document.getElementById('about-link');
-const privacyLink = document.getElementById('privacy-link');
-
 // Functions
 function applyTranslations() {
     const t = translations[state.lang];
     
-    appNameElements.forEach(el => el.textContent = t.appName);
-    taglineElement.textContent = t.tagline;
-    step1Title.textContent = t.step1Title;
-    step2Title.textContent = t.step2Title;
-    step3Title.textContent = t.step3Title;
-    selectedCuisinePrefix.textContent = t.selectedCuisine + ": ";
+    document.querySelectorAll('.app-name').forEach(el => el.textContent = t.appName);
+    document.getElementById('tagline').textContent = t.tagline;
+    document.querySelector('#cuisine-section .section-title').textContent = t.step1Title;
+    document.querySelector('#ingredient-section .section-title').textContent = t.step2Title;
+    document.querySelector('#recipe-section .section-title').textContent = t.step3Title;
+    document.getElementById('selected-cuisine-prefix').textContent = t.selectedCuisine + ": ";
+    
+    const ingredientInput = document.getElementById('ingredient-input');
     ingredientInput.placeholder = t.placeholder;
-    addIngredientBtn.textContent = t.addBtn;
-    findRecipeBtn.textContent = t.findBtn;
-    backToCuisineBtn.textContent = t.backBtn;
-    restartBtn.textContent = t.restartBtn;
-    aboutLink.textContent = t.about;
-    privacyLink.textContent = t.privacy;
-    langToggle.textContent = state.lang === 'ko' ? 'English' : '한국어';
+    
+    document.getElementById('add-ingredient-btn').textContent = t.addBtn;
+    document.getElementById('find-recipe-btn').textContent = t.findBtn;
+    document.getElementById('back-to-cuisine').textContent = t.backBtn;
+    document.getElementById('restart-btn').textContent = t.restartBtn;
+    document.getElementById('about-link').textContent = t.about;
+    document.getElementById('privacy-link').textContent = t.privacy;
+    document.getElementById('lang-toggle').textContent = state.lang === 'ko' ? 'English' : '한국어';
 
     // Update Cuisine Labels
     document.querySelectorAll('.cuisine-card').forEach(card => {
@@ -63,7 +45,7 @@ function applyTranslations() {
     });
 
     if (state.selectedCuisine) {
-        selectedCuisineDisplay.textContent = t.cuisines[state.selectedCuisine];
+        document.getElementById('selected-cuisine-display').textContent = t.cuisines[state.selectedCuisine];
     }
 
     updateIngredientTags();
@@ -77,7 +59,8 @@ function navigateTo(stepId) {
 }
 
 function updateIngredientTags() {
-    ingredientTagsContainer.innerHTML = '';
+    const container = document.getElementById('ingredient-tags');
+    container.innerHTML = '';
     const t = translations[state.lang];
     const defaults = DEFAULT_INGREDIENTS[state.lang][state.selectedCuisine] || [];
 
@@ -90,15 +73,16 @@ function updateIngredientTags() {
             ${isDefault ? `<small>${t.defaultLabel}</small>` : ''}
             <span class="remove" data-index="${index}">&times;</span>
         `;
-        ingredientTagsContainer.appendChild(tag);
+        container.appendChild(tag);
     });
 }
 
 function addIngredient() {
-    const value = ingredientInput.value.trim();
+    const input = document.getElementById('ingredient-input');
+    const value = input.value.trim();
     if (value && !state.ingredients.includes(value)) {
         state.ingredients.push(value);
-        ingredientInput.value = '';
+        input.value = '';
         updateIngredientTags();
     }
 }
@@ -121,11 +105,12 @@ function findRecipes() {
 }
 
 function renderRecipes(recipes) {
-    recipeGrid.innerHTML = '';
+    const grid = document.getElementById('recipe-grid');
+    grid.innerHTML = '';
     const t = translations[state.lang];
 
     if (recipes.length === 0) {
-        recipeGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px;">${t.noRecipe}</p>`;
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px;">${t.noRecipe}</p>`;
         return;
     }
 
@@ -144,13 +129,15 @@ function renderRecipes(recipes) {
             </div>
         `;
         card.onclick = () => showRecipeDetail(recipe);
-        recipeGrid.appendChild(card);
+        grid.appendChild(card);
     });
 }
 
 function showRecipeDetail(recipe) {
     const t = translations[state.lang];
-    modalBody.innerHTML = `
+    const modal = document.getElementById('recipe-modal');
+    const body = document.getElementById('modal-body');
+    body.innerHTML = `
         <h2 style="font-size: 2rem; margin-bottom: 10px;">${recipe.emoji} ${recipe.name[state.lang]}</h2>
         <div style="margin-bottom: 20px; color: #666;">
             <p>⏱ ${recipe.time[state.lang]} | 📊 ${recipe.difficulty[state.lang]}</p>
@@ -171,60 +158,60 @@ function showRecipeDetail(recipe) {
             ${recipe.steps[state.lang].map(step => `<li style="margin-bottom: 12px; line-height: 1.5;">${step}</li>`).join('')}
         </ol>
     `;
-    recipeModal.showModal();
+    modal.showModal();
 }
 
-// Event Listeners
-langToggle.addEventListener('click', () => {
-    state.lang = state.lang === 'ko' ? 'en' : 'ko';
-    localStorage.setItem('lang', state.lang);
-    applyTranslations();
-});
-
-cuisineCards.forEach(card => {
-    card.addEventListener('click', () => {
-        const cuisine = card.dataset.cuisine;
-        state.selectedCuisine = cuisine;
-        state.ingredients = [...(DEFAULT_INGREDIENTS[state.lang][cuisine] || [])];
-        
+// Event Listeners Initialization
+function initEventListeners() {
+    document.getElementById('lang-toggle').addEventListener('click', () => {
+        state.lang = state.lang === 'ko' ? 'en' : 'ko';
+        localStorage.setItem('lang', state.lang);
         applyTranslations();
-        navigateTo('ingredient-section');
     });
-});
 
-addIngredientBtn.addEventListener('click', addIngredient);
-ingredientInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addIngredient();
-});
+    document.querySelectorAll('.cuisine-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const cuisine = card.dataset.cuisine;
+            state.selectedCuisine = cuisine;
+            state.ingredients = [...(DEFAULT_INGREDIENTS[state.lang][cuisine] || [])];
+            
+            applyTranslations();
+            navigateTo('ingredient-section');
+        });
+    });
 
-ingredientTagsContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('remove')) {
-        const index = e.target.dataset.index;
-        state.ingredients.splice(index, 1);
+    document.getElementById('add-ingredient-btn').addEventListener('click', addIngredient);
+    document.getElementById('ingredient-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addIngredient();
+    });
+
+    document.getElementById('ingredient-tags').addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove')) {
+            const index = e.target.dataset.index;
+            state.ingredients.splice(index, 1);
+            updateIngredientTags();
+        }
+    });
+
+    document.getElementById('find-recipe-btn').addEventListener('click', findRecipes);
+    document.getElementById('back-to-cuisine').addEventListener('click', () => {
+        navigateTo('cuisine-section');
+    });
+
+    document.getElementById('restart-btn').addEventListener('click', () => {
+        state.ingredients = [];
+        state.selectedCuisine = '';
         updateIngredientTags();
-    }
-});
+        navigateTo('cuisine-section');
+    });
 
-findRecipeBtn.addEventListener('click', findRecipes);
+    const modal = document.getElementById('recipe-modal');
+    document.getElementById('close-modal').addEventListener('click', () => modal.close());
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.close();
+    });
+}
 
-backToCuisineBtn.addEventListener('click', () => {
-    navigateTo('cuisine-section');
-});
-
-restartBtn.addEventListener('click', () => {
-    state.ingredients = [];
-    state.selectedCuisine = '';
-    updateIngredientTags();
-    navigateTo('cuisine-section');
-});
-
-closeModalBtn.addEventListener('click', () => {
-    recipeModal.close();
-});
-
-recipeModal.addEventListener('click', (e) => {
-    if (e.target === recipeModal) recipeModal.close();
-});
-
-// Init
+// Initialize
+initEventListeners();
 applyTranslations();
