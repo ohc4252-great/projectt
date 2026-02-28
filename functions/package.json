@@ -13,13 +13,13 @@
   },
   "main": "index.js",
   "dependencies": {
-    "firebase-admin": "^11.8.0",
-    "firebase-functions": "^4.3.1",
-    "openai": "^4.0.0",
-    "dotenv": "^16.0.0"
+    "firebase-admin": "^13.7.0",
+    "firebase-functions": "^7.0.6",
+    "openai": "^6.25.0",
+    "dotenv": "^16.4.0"
   },
   "devDependencies": {
-    "firebase-functions-test": "^3.1.0"
+    "firebase-functions-test": "^3.4.1"
   },
   "private": true
 }
