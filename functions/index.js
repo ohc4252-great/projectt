@@ -1,60 +1,103 @@
-const { onRequest } = require("firebase-functions/v2/https");
-const { OpenAI } = require("openai");
+/**
+ * Firebase Cloud Functions v2 - Recipe Curation Logic
+ * Node.js 20 환경 및 OpenAI gpt-4o-mini 사용
+ */
 
-// OpenAI API 연결 설정 (환경변수에서 키를 가져옴)
+const { onRequest } = require("firebase-functions/v2/https");
+const logger = require("firebase-functions/logger");
+const OpenAI = require("openai");
+
+// OpenAI API 클라이언트 초기화
+// 프로젝트의 .env 파일에 OPENAI_API_KEY가 설정되어 있어야 합니다.
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-exports.getRecipes = onRequest({ cors: true }, async (req, res) => {
-  // 1. 프론트엔드에서 보낸 데이터 추출
-  const data = req.body.data || req.body;
-  const ingredients = data.ingredients;
-  const category = data.category;
-
-  // 재료가 비어있으면 돌려보냄
-  if (!ingredients || ingredients.length === 0) {
-    return res.status(400).json({ data: { error: "재료가 입력되지 않았습니다." } });
+/**
+ * 큐레이션 기반 레시피 추천 함수 (기존 getRecipes 이름 유지)
+ */
+exports.getRecipes = onRequest({ cors: true, maxInstances: 10 }, async (req, res) => {
+  // 1. 요청 방식 확인
+  if (req.method !== "POST") {
+    res.status(405).send("Method Not Allowed");
+    return;
   }
 
-  // 2. OpenAI에게 보낼 깐깐한 명령서 (프롬프트 세팅)
-  const prompt = `
-    너는 전문 셰프야. 
-    사용자가 가진 재료: [${ingredients.join(', ')}]
-    원하는 요리 종류: '${category}'
-    
-    이 재료를 최우선으로 활용해서 만들 수 있는 레시피 3개를 추천해줘.
-    없는 재료가 있더라도 요리에 치명적이지 않은(대체 가능하거나 생략 가능한) 레시피 위주로 부탁해.
-    
-    반드시 아래의 JSON 형식으로만 답변해:
-    {
-      "recipes": [
-        {
-          "title": "요리 이름",
-          "time": "예상 소요 시간(분)",
-          "ingredients_needed": ["사용할 사용자의 재료와 추가로 필요한 소량의 재료"],
-          "missing_ingredients_note": "없어도 되는 재료나 대체품에 대한 짧은 코멘트",
-          "instructions": ["1단계", "2단계", "3단계"]
-        }
-      ]
-    }
-  `;
+  // Firebase v1 스타일의 { data: { ... } } 구조 또는 일반 JSON 구조 모두 대응
+  const body = req.body.data || req.body;
+  const { ingredients, category } = body;
+
+  if (!ingredients || !category) {
+    res.status(400).json({ data: { error: "재료와 요리 카테고리가 필요합니다." } });
+    return;
+  }
 
   try {
-    // 3. ⭐️ 가짜 데이터가 아닌, "진짜" OpenAI 서버에 요청을 보내는 핵심 부분!
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // 빠르고 가성비 좋은 모델
-      messages: [{ role: "user", content: prompt }],
-      response_format: { type: "json_object" }, // JSON으로만 대답하라고 강제
-      max_tokens: 1000, // 토큰 제한 1000으로 설정
+    logger.info(`Curation Request - Category: ${category}, Ingredients: ${ingredients}`);
+
+    // 2. OpenAI API 호출 (gpt-4o-mini)
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: `당신은 사용자의 냉장고 속 재료를 분석하여 최적의 유명 요리를 추천하는 수석 셰프입니다.
+          
+[미션]
+1. 직접 요리법(instructions)을 절대 설명하지 마세요. 대신 인터넷에 실제로 존재하고 검증된 유명한 메뉴 3가지를 추천하세요.
+2. 각 요리는 반드시 '백종원의 OOO', '김수미의 OOO' 처럼 실제 존재하는 유명 레시피이거나 대중적인 메뉴여야 합니다.
+3. 결과는 반드시 유효한 JSON 형식으로만 응답하세요.
+
+[출력 데이터 구조]
+{
+  "recipes": [
+    {
+      "title": "요리 이름 (예: 백종원 돼지고기 김치찌개)",
+      "reason": "왜 이 요리를 추천하는지(입력한 재료와의 연관성) 짧은 설명",
+      "ingredients_needed": ["필요한 핵심 재료들"],
+      "youtube_search_link": "https://www.youtube.com/results?search_query=요리이름+황금레시피",
+      "google_search_keyword": "요리이름 황금레시피"
+    }
+  ]
+}
+
+[중요 제약 조건]
+- 절대 가짜 URL이나 존재하지 않는 도메인을 지어내지 마세요.
+- 유튜브 검색 링크는 정해진 양식(https://www.youtube.com/results?search_query=검색어)을 엄수하세요.
+- 모든 답변은 한국어로 작성하세요.`,
+        },
+        {
+          role: "user",
+          content: `카테고리: ${category}\n보유 재료: ${Array.isArray(ingredients) ? ingredients.join(', ') : ingredients}\n이 재료들로 만들 수 있는 맛있는 메뉴 3가지를 추천해줘.`,
+        },
+      ],
+      response_format: { type: "json_object" }, 
+      max_tokens: 1000,
+      temperature: 0.7,
     });
 
-    // 4. OpenAI가 준 진짜 레시피를 프론트엔드로 전달
-    const result = JSON.parse(response.choices[0].message.content);
-    res.status(200).json({ data: result });
+    // 3. 응답 파싱
+    const content = JSON.parse(completion.choices[0].message.content);
+    
+    // 링크 안전 처리 (인코딩 보장)
+    if (content.recipes && Array.isArray(content.recipes)) {
+      content.recipes = content.recipes.map(recipe => {
+        const query = encodeURIComponent(recipe.title + " 황금레시피");
+        recipe.youtube_search_link = `https://www.youtube.com/results?search_query=${query}`;
+        return recipe;
+      });
+    }
+
+    // 4. 결과 반환 (Firebase Callable Function 응답 형식을 고려하여 data 객체로 감쌈)
+    res.status(200).json({ data: content });
 
   } catch (error) {
-    console.error("OpenAI 통신 에러:", error);
-    res.status(500).json({ data: { error: "레시피를 생성하는 중 오류가 발생했습니다." } });
+    logger.error("OpenAI API Error:", error);
+    res.status(500).json({ 
+      data: { 
+        error: "레시피 추천 중 오류가 발생했습니다.",
+        details: error.message 
+      }
+    });
   }
 });
