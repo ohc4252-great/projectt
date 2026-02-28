@@ -97,21 +97,45 @@ function addIngredient() {
     }
 }
 
-function findRecipes() {
-    const t = translations[state.lang];
-    const filtered = RECIPES.filter(recipe => recipe.cuisine === state.selectedCuisine);
-    
-    const scored = filtered.map(recipe => {
-        const recipeIngs = recipe.ingredients[state.lang];
-        const matchedItems = recipeIngs.filter(recipeIng => 
-            state.ingredients.some(userIng => recipeIng.toLowerCase().includes(userIng.toLowerCase()) || userIng.toLowerCase().includes(recipeIng.toLowerCase()))
-        );
-        const matchCount = matchedItems.length;
-        return { ...recipe, matchCount, matchedItems };
-    }).sort((a, b) => b.matchCount - a.matchCount);
+// Firebase Initialization (Assume Firebase SDK is available in index.html via CDN)
+// import { getFunctions, httpsCallable } from 'firebase/functions'; // If using npm
+// For this environment, we'll use the window.firebase global or simple fetch
 
-    renderRecipes(scored);
+async function findRecipes() {
+    const t = translations[state.lang];
+    const grid = document.getElementById('recipe-grid');
+    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;"><div class="loader"></div><p>AI가 최적의 레시피를 찾고 있습니다...</p></div>';
     navigateTo('recipe-section');
+
+    try {
+        // 실제 운영 시에는 firebase.functions().httpsCallable('getAIRecommendations')를 사용합니다.
+        // 현재는 API 시뮬레이션 또는 실제 호출 로직을 구성합니다.
+        
+        const response = await fetch('https://us-central1-first-html-projcet.cloudfunctions.net/getAIRecommendations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                data: {
+                    ingredients: state.ingredients,
+                    cuisine: state.selectedCuisine,
+                    lang: state.lang
+                }
+            })
+        });
+
+        const result = await response.json();
+        
+        if (result.result && result.result.success) {
+            renderRecipes(result.result.recipes);
+        } else {
+            throw new Error('AI Response Error');
+        }
+    } catch (error) {
+        console.error("AI Fetch Error:", error);
+        // Fallback to local recipes if AI fails
+        const filtered = RECIPES.filter(recipe => recipe.cuisine === state.selectedCuisine);
+        renderRecipes(filtered);
+    }
 }
 
 function renderRecipes(recipes) {
