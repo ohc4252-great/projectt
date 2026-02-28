@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스마트 레시피 파인더 | 냉장고 파먹기</title>
+    <title>냉털 | Fridge Raider</title>
     <!-- Google AdSense -->
     <meta name="google-adsense-account" content="ca-pub-3971219491693844">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3971219491693844" crossorigin="anonymous"></script>
@@ -15,16 +15,17 @@
 <body>
     <div class="background-texture"></div>
     <nav class="top-nav">
-        <a href="index.html" class="nav-brand">🍳 스마트 레시피 파인더</a>
+        <a href="index.html" class="nav-brand">🍳 <span class="app-name">냉털</span></a>
         <div class="nav-links">
-            <a href="about.html">소개</a>
-            <a href="privacy.html">개인정보처리방침</a>
+            <a href="about.html" id="about-link">소개</a>
+            <a href="privacy.html" id="privacy-link">개인정보처리방침</a>
+            <button id="lang-toggle" class="lang-btn">English</button>
         </div>
     </nav>
     <main id="app">
         <header>
-            <h1>🍳 스마트 레시피 파인더</h1>
-            <p>오늘 뭐 먹지? 재료만 입력하면 알려드려요!</p>
+            <h1 class="app-name">냉털</h1>
+            <p id="tagline">오늘 뭐 먹지? 재료만 입력하면 알려드려요!</p>
         </header>
 
         <!-- Ad Slot: Top -->
@@ -66,7 +67,7 @@
         <!-- Step 2: Ingredient Input -->
         <section id="ingredient-section" class="step">
             <h2 class="section-title">2단계: 남은 재료를 입력하세요</h2>
-            <p class="subtitle">선택한 분야: <span id="selected-cuisine-display">한식</span></p>
+            <p class="subtitle"><span id="selected-cuisine-prefix">선택한 분야: </span><span id="selected-cuisine-display">한식</span></p>
             <div class="input-container">
                 <input type="text" id="ingredient-input" placeholder="재료를 입력하고 Enter를 누르세요 (예: 달걀, 양파)">
                 <button id="add-ingredient-btn">추가</button>

@@ -61,6 +61,24 @@ body {
 .nav-links {
     display: flex;
     gap: 20px;
+    align-items: center;
+}
+
+.lang-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.lang-btn:hover {
+    background: var(--primary-dark);
+    transform: scale(1.05);
 }
 
 .nav-links a {
