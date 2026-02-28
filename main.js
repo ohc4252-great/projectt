@@ -1,17 +1,6 @@
 import { RECIPES, DEFAULT_INGREDIENTS } from './recipes.js';
 import { translations } from './translations.js';
 
-// Firebase Config
-const firebaseConfig = {
-    projectId: "fridge-raider-bc871",
-};
-
-// Initialize Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const functions = firebase.functions();
-
 // State Management
 let state = {
     lang: localStorage.getItem('lang') || 'ko',
@@ -65,18 +54,9 @@ function applyTranslations() {
 }
 
 function navigateTo(stepId) {
-    // 1. 모든 섹션에서 active 클래스 제거 (확실한 숨김)
-    Object.values(sections).forEach(section => {
-        section.classList.remove('active');
-    });
-
-    // 2. 목표 섹션에만 active 클래스 추가
-    const targetSection = document.getElementById(stepId);
-    if (targetSection) {
-        targetSection.classList.add('active');
-    }
+    Object.values(sections).forEach(section => section.classList.remove('active'));
+    document.getElementById(stepId).classList.add('active');
     
-    // 3. body class 업데이트 (헤더 제어용)
     document.body.className = '';
     if (stepId === 'ingredient-section') document.body.classList.add('step-2');
     if (stepId === 'recipe-section') document.body.classList.add('step-3');
@@ -135,18 +115,25 @@ async function findRecipes() {
     const minimumDelay = 10000;
 
     try {
-        const getAIRecommendations = functions.httpsCallable('getAIRecommendations');
-        const [result] = await Promise.all([
-            getAIRecommendations({
+        // Backend HTTP Trigger URL (Updated to actual deployed URL)
+        const response = await fetch('https://getairecommendations-us-central1-fridge-raider-bc871.cloudfunctions.net/getAIRecommendations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
                 ingredients: state.ingredients,
-                cuisine: state.selectedCuisine,
+                category: state.selectedCuisine,
                 lang: state.lang
-            }),
-            new Promise(resolve => setTimeout(resolve, minimumDelay))
-        ]);
+            })
+        });
 
-        if (result.data && result.data.success) {
-            renderRecipes(result.data.recipes);
+        const result = await response.json();
+        
+        // Ensure minimum 10s delay
+        const elapsedTime = Date.now() - Date.now(); // Simulation, real delay handled by await
+        await new Promise(resolve => setTimeout(resolve, Math.max(0, minimumDelay - elapsedTime)));
+
+        if (result.success && result.recipes) {
+            renderRecipes(result.recipes);
         } else {
             throw new Error('AI Response Error');
         }
@@ -167,22 +154,21 @@ function renderRecipes(recipes) {
         return;
     }
 
-    const recipeList = Array.isArray(recipes) ? recipes : (recipes.recipes || []);
-
-    recipeList.forEach(recipe => {
+    recipes.forEach(recipe => {
         const card = document.createElement('div');
         card.className = 'recipe-card';
         
-        const name = typeof recipe.name === 'string' ? recipe.name : (recipe.name?.[state.lang] || '');
-        const time = typeof recipe.time === 'string' ? recipe.time : (recipe.time?.[state.lang] || '');
-        const diff = typeof recipe.difficulty === 'string' ? recipe.difficulty : (recipe.difficulty?.[state.lang] || '');
+        // Backend uses 'title' and 'time', match accordingly
+        const title = recipe.title || recipe.name || '';
+        const time = recipe.time || '';
+        const diff = recipe.difficulty || (state.lang === 'ko' ? '보통' : 'Medium');
 
         card.innerHTML = `
             <div class="recipe-img">${recipe.emoji || '🥘'}</div>
             <div class="recipe-info">
-                <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 8px;">${name}</h3>
+                <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 8px;">${title}</h3>
                 <div class="recipe-meta" style="font-weight: 600;">
-                    <span>⏱ ${time}</span>
+                    <span>⏱ ${time}${state.lang === 'ko' && !time.includes('분') ? '분' : ''}</span>
                     <span>📊 ${diff}</span>
                 </div>
             </div>
@@ -202,19 +188,22 @@ function showRecipeDetail(recipe) {
     const modal = document.getElementById('recipe-modal');
     const body = document.getElementById('modal-body');
     
-    const recipeName = typeof recipe.name === 'string' ? recipe.name : (recipe.name?.[state.lang] || '');
-    const recipeTime = typeof recipe.time === 'string' ? recipe.time : (recipe.time?.[state.lang] || '');
-    const recipeDifficulty = typeof recipe.difficulty === 'string' ? recipe.difficulty : (recipe.difficulty?.[state.lang] || '');
-    const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : (recipe.ingredients?.[state.lang] || []);
-    const steps = Array.isArray(recipe.steps) ? recipe.steps : (recipe.steps?.[state.lang] || []);
+    const title = recipe.title || recipe.name || '';
+    const time = recipe.time || '';
+    const diff = recipe.difficulty || (state.lang === 'ko' ? '보통' : 'Medium');
+    const ingredients = recipe.ingredients_needed || recipe.ingredients || [];
+    const steps = recipe.instructions || recipe.steps || [];
+    const note = recipe.missing_ingredients_note || '';
 
     body.innerHTML = `
         <div style="padding: 20px;">
-            <h2 style="font-size: 2rem; margin-bottom: 10px; font-weight: 800;">${recipe.emoji || ''} ${recipeName}</h2>
+            <h2 style="font-size: 2rem; margin-bottom: 10px; font-weight: 800;">${recipe.emoji || '🥘'} ${title}</h2>
             <div style="margin-bottom: 25px; color: #666; font-weight: 600;">
-                <p>⏱ ${recipeTime} | 📊 ${recipeDifficulty}</p>
+                <p>⏱ ${time}${state.lang === 'ko' && !time.includes('분') ? '분' : ''} | 📊 ${diff}</p>
             </div>
             
+            ${note ? `<p style="background: var(--accent); padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; color: oklch(0.4 0.1 60);">💡 ${note}</p>` : ''}
+
             <div style="background: oklch(0.98 0.01 100); padding: 20px; border-radius: 20px; margin-bottom: 25px; border: 1px solid rgba(0,0,0,0.05);">
                 <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.ingredientsTitle}</h4>
                 <div style="display: flex; flex-wrap: wrap; gap: 8px;">
@@ -241,18 +230,20 @@ function initEventListeners() {
 
     document.querySelectorAll('.cuisine-card').forEach(card => {
         card.addEventListener('click', () => {
-            const cuisine = card.dataset.cuisine;
-            state.selectedCuisine = cuisine;
-            state.ingredients = [...(DEFAULT_INGREDIENTS[state.lang][cuisine] || [])];
+            state.selectedCuisine = card.dataset.cuisine;
+            state.ingredients = [...(DEFAULT_INGREDIENTS[state.lang][state.selectedCuisine] || [])];
             applyTranslations();
             navigateTo('ingredient-section');
         });
     });
 
     document.getElementById('add-ingredient-btn').addEventListener('click', addIngredient);
-    document.getElementById('ingredient-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') addIngredient();
-    });
+    const ingredientInput = document.getElementById('ingredient-input');
+    if (ingredientInput) {
+        ingredientInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addIngredient();
+        });
+    }
 
     document.getElementById('ingredient-tags').addEventListener('click', (e) => {
         if (e.target.classList.contains('remove')) {
