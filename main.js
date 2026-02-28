@@ -88,6 +88,13 @@ function updateIngredientTags() {
 function addIngredient() {
     const input = document.getElementById('ingredient-input');
     const value = input.value.trim();
+    
+    // 재료 개수 제한 (최대 30개)
+    if (state.ingredients.length >= 30) {
+        alert(state.lang === 'ko' ? '재료는 최대 30개까지만 입력할 수 있습니다.' : 'You can add up to 30 ingredients.');
+        return;
+    }
+
     if (value && !state.ingredients.includes(value)) {
         state.ingredients.push(value);
         input.value = '';
