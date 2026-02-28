@@ -36,7 +36,7 @@ export const translations = {
         privacyTitle: "개인정보처리방침",
         privacyDate: "시행일: 2026년 2월 28일",
         contactTitle: "문의",
-        contactText: "본 방침에 대한 질문이 있으시면 contact@smartrecipe.com으로 문의해 주시기 바랍니다."
+        contactText: "본 방침에 대한 질문이 있으시면 richanseon@gmail.com으로 문의해 주시기 바랍니다."
     },
     en: {
         appName: "Fridge Raider",
@@ -75,6 +75,6 @@ export const translations = {
         privacyTitle: "Privacy Policy",
         privacyDate: "Effective Date: Feb 28, 2026",
         contactTitle: "Contact",
-        contactText: "If you have any questions about this policy, please contact us at contact@smartrecipe.com"
+        contactText: "If you have any questions about this policy, please contact us at richanseon@gmail.com"
     }
 };
