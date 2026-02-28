@@ -65,10 +65,18 @@ function applyTranslations() {
 }
 
 function navigateTo(stepId) {
-    Object.values(sections).forEach(section => section.classList.remove('active'));
-    document.getElementById(stepId).classList.add('active');
+    // 1. 모든 섹션에서 active 클래스 제거 (확실한 숨김)
+    Object.values(sections).forEach(section => {
+        section.classList.remove('active');
+    });
+
+    // 2. 목표 섹션에만 active 클래스 추가
+    const targetSection = document.getElementById(stepId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
     
-    // Update body class for step-based styling (Logo visible only on step 1)
+    // 3. body class 업데이트 (헤더 제어용)
     document.body.className = '';
     if (stepId === 'ingredient-section') document.body.classList.add('step-2');
     if (stepId === 'recipe-section') document.body.classList.add('step-3');
@@ -91,7 +99,7 @@ function updateIngredientTags() {
         tag.innerHTML = `
             ${ing}
             ${isDefault ? `<small>${t.defaultLabel}</small>` : ''}
-            <span class="remove" data-index="${index}">&times;</span>
+            <span class="remove" data-index="${index}" style="cursor:pointer; margin-left:5px;">&times;</span>
         `;
         container.appendChild(tag);
     });
@@ -124,7 +132,7 @@ async function findRecipes() {
     `;
     navigateTo('recipe-section');
 
-    const minimumDelay = 10000; // 10 seconds
+    const minimumDelay = 10000;
 
     try {
         const getAIRecommendations = functions.httpsCallable('getAIRecommendations');
@@ -140,10 +148,10 @@ async function findRecipes() {
         if (result.data && result.data.success) {
             renderRecipes(result.data.recipes);
         } else {
-            throw new Error('AI Error');
+            throw new Error('AI Response Error');
         }
     } catch (error) {
-        console.error("Fetch Error:", error);
+        console.error("AI Error:", error);
         const filtered = RECIPES.filter(recipe => recipe.cuisine === state.selectedCuisine);
         renderRecipes(filtered);
     }
@@ -159,7 +167,9 @@ function renderRecipes(recipes) {
         return;
     }
 
-    recipes.forEach(recipe => {
+    const recipeList = Array.isArray(recipes) ? recipes : (recipes.recipes || []);
+
+    recipeList.forEach(recipe => {
         const card = document.createElement('div');
         card.className = 'recipe-card';
         
@@ -168,7 +178,7 @@ function renderRecipes(recipes) {
         const diff = typeof recipe.difficulty === 'string' ? recipe.difficulty : (recipe.difficulty?.[state.lang] || '');
 
         card.innerHTML = `
-            <div class="recipe-img">${recipe.emoji || '🍲'}</div>
+            <div class="recipe-img">${recipe.emoji || '🥘'}</div>
             <div class="recipe-info">
                 <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 8px;">${name}</h3>
                 <div class="recipe-meta" style="font-weight: 600;">
@@ -199,27 +209,29 @@ function showRecipeDetail(recipe) {
     const steps = Array.isArray(recipe.steps) ? recipe.steps : (recipe.steps?.[state.lang] || []);
 
     body.innerHTML = `
-        <h2 style="font-size: 2.2rem; margin-bottom: 10px; font-weight: 800;">${recipe.emoji || ''} ${recipeName}</h2>
-        <div style="margin-bottom: 25px; color: #666; font-weight: 600;">
-            <p>⏱ ${recipeTime} | 📊 ${recipeDifficulty}</p>
-        </div>
-        
-        <div style="background: oklch(0.98 0.01 100); padding: 25px; border-radius: 20px; margin-bottom: 25px; border: 1px solid rgba(0,0,0,0.05);">
-            <h4 style="margin-bottom: 15px; font-size: 1.2rem; font-weight: 800; color: var(--primary-dark);">${t.ingredientsTitle}</h4>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                ${ingredients.map(ing => `<span style="padding: 6px 14px; border-radius: 50px; font-size: 0.95rem; background: white; color: #444; border: 1px solid rgba(0,0,0,0.05); font-weight: 600;">${ing}</span>`).join('')}
+        <div style="padding: 20px;">
+            <h2 style="font-size: 2rem; margin-bottom: 10px; font-weight: 800;">${recipe.emoji || ''} ${recipeName}</h2>
+            <div style="margin-bottom: 25px; color: #666; font-weight: 600;">
+                <p>⏱ ${recipeTime} | 📊 ${recipeDifficulty}</p>
             </div>
-        </div>
+            
+            <div style="background: oklch(0.98 0.01 100); padding: 20px; border-radius: 20px; margin-bottom: 25px; border: 1px solid rgba(0,0,0,0.05);">
+                <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.ingredientsTitle}</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    ${ingredients.map(ing => `<span style="padding: 6px 12px; border-radius: 50px; font-size: 0.9rem; background: white; color: #444; border: 1px solid rgba(0,0,0,0.05); font-weight: 600;">${ing}</span>`).join('')}
+                </div>
+            </div>
 
-        <h3 style="margin-bottom: 20px; border-bottom: 3px solid var(--primary); display: inline-block; font-weight: 800;">${t.stepsTitle}</h3>
-        <ol style="padding-left: 20px;">
-            ${steps.map(step => `<li style="margin-bottom: 15px; line-height: 1.6; font-size: 1.1rem; font-weight: 500; color: #333; padding-left: 10px;">${step}</li>`).join('')}
-        </ol>
+            <h3 style="margin-bottom: 15px; border-bottom: 3px solid var(--primary); display: inline-block; font-weight: 800;">${t.stepsTitle}</h3>
+            <ol style="padding-left: 20px;">
+                ${steps.map(step => `<li style="margin-bottom: 12px; line-height: 1.6; font-size: 1rem; color: #333; padding-left: 5px;">${step}</li>`).join('')}
+            </ol>
+        </div>
     `;
     modal.showModal();
 }
 
-// Event Listeners
+// Event Listeners Initialization
 function initEventListeners() {
     document.getElementById('lang-toggle').addEventListener('click', () => {
         state.lang = state.lang === 'ko' ? 'en' : 'ko';
@@ -229,8 +241,9 @@ function initEventListeners() {
 
     document.querySelectorAll('.cuisine-card').forEach(card => {
         card.addEventListener('click', () => {
-            state.selectedCuisine = card.dataset.cuisine;
-            state.ingredients = [...(DEFAULT_INGREDIENTS[state.lang][state.selectedCuisine] || [])];
+            const cuisine = card.dataset.cuisine;
+            state.selectedCuisine = cuisine;
+            state.ingredients = [...(DEFAULT_INGREDIENTS[state.lang][cuisine] || [])];
             applyTranslations();
             navigateTo('ingredient-section');
         });
@@ -250,7 +263,10 @@ function initEventListeners() {
     });
 
     document.getElementById('find-recipe-btn').addEventListener('click', findRecipes);
-    document.getElementById('back-to-cuisine').addEventListener('click', () => navigateTo('cuisine-section'));
+    document.getElementById('back-to-cuisine').addEventListener('click', () => {
+        navigateTo('cuisine-section');
+    });
+
     document.getElementById('restart-btn').addEventListener('click', () => {
         state.ingredients = [];
         state.selectedCuisine = '';
@@ -260,8 +276,11 @@ function initEventListeners() {
 
     const modal = document.getElementById('recipe-modal');
     document.getElementById('close-modal').addEventListener('click', () => modal.close());
-    modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.close();
+    });
 }
 
+// Initialize
 initEventListeners();
 applyTranslations();

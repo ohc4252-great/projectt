@@ -22,7 +22,7 @@
     <nav class="top-nav">
         <a href="index.html" class="nav-brand">
             <img src="assets/images/logo4.png" alt="Mascot" class="brand-logo">
-            <span class="app-name">냉장고 털기</span>
+            <span class="app-name">냉털</span>
         </a>
         <div class="nav-links">
             <a href="about.html" id="about-link">소개</a>
@@ -30,27 +30,15 @@
             <button id="lang-toggle" class="lang-btn">English</button>
         </div>
     </nav>
+
     <main id="app">
         <header>
             <div class="hero-header">
                 <img src="assets/images/logo4.png" alt="Mascot" class="hero-logo">
-                <h1 class="app-name">냉장고 털기</h1>
+                <h1 class="app-name">냉털</h1>
+                <p id="tagline">오늘 뭐 먹지? 재료만 입력하면 알려드려요!</p>
             </div>
-            <p id="tagline">오늘 뭐 먹지? 재료만 입력하면 알려드려요!</p>
         </header>
-
-        <!-- Ad Slot: Top -->
-        <div class="ad-container top-ad">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-3971219491693844"
-                 data-ad-slot="xxxxxxxxx"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
 
         <!-- Step 1: Cuisine Selection -->
         <section id="cuisine-section" class="step active">
@@ -78,15 +66,20 @@
         <!-- Step 2: Ingredient Input -->
         <section id="ingredient-section" class="step">
             <h2 class="section-title">2단계: 남은 재료를 입력하세요</h2>
-            <p class="subtitle"><span id="selected-cuisine-prefix">선택한 분야: </span><span id="selected-cuisine-display">한식</span></p>
-            <div class="input-container">
-                <input type="text" id="ingredient-input" placeholder="재료를 입력하고 Enter를 누르세요 (예: 달걀, 양파)">
-                <button id="add-ingredient-btn">추가</button>
-            </div>
-            <div id="ingredient-tags" class="tag-cloud"></div>
-            <div class="action-bar">
-                <button id="back-to-cuisine" class="secondary-btn">이전으로</button>
-                <button id="find-recipe-btn" class="primary-btn">레시피 찾기</button>
+            <div class="cozy-card">
+                <p class="subtitle"><span id="selected-cuisine-prefix">선택한 분야: </span><span id="selected-cuisine-display" style="color: var(--primary-dark); font-weight: 800;">한식</span></p>
+                
+                <div class="input-group">
+                    <input type="text" id="ingredient-input" placeholder="재료를 입력하고 Enter를 누르세요">
+                    <button id="add-ingredient-btn" class="add-btn">추가</button>
+                </div>
+
+                <div id="ingredient-tags" class="tag-cloud"></div>
+
+                <div class="action-bar">
+                    <button id="back-to-cuisine" class="secondary-btn">이전으로</button>
+                    <button id="find-recipe-btn" class="primary-btn">레시피 찾기</button>
+                </div>
             </div>
         </section>
 
@@ -97,19 +90,6 @@
                 <!-- Recipe cards will be injected here -->
             </div>
             
-            <!-- Ad Slot: Bottom -->
-            <div class="ad-container bottom-ad">
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-3971219491693844"
-                     data-ad-slot="xxxxxxxxx"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </div>
-
             <div class="action-bar">
                 <button id="restart-btn" class="secondary-btn">다시 시작하기</button>
             </div>
@@ -118,7 +98,7 @@
 
     <footer>
         <div class="footer-content">
-            <p data-t="footerCopy">© 2026 냉장고 털기 (Fridge Raider). All rights reserved.</p>
+            <p data-t="footerCopy">© 2026 냉털 (Fridge Raider). All rights reserved.</p>
             <div class="footer-links">
                 <a href="about.html" data-t="about">소개</a>
                 <a href="privacy.html" data-t="privacy">개인정보처리방침</a>
@@ -129,12 +109,11 @@
     <!-- Recipe Detail Modal -->
     <dialog id="recipe-modal">
         <div class="modal-content">
-            <button id="close-modal" class="close-btn">&times;</button>
+            <button id="close-modal" class="close-btn" style="position: absolute; top: 20px; right: 20px; border: none; background: none; font-size: 2rem; cursor: pointer;">&times;</button>
             <div id="modal-body"></div>
         </div>
     </dialog>
 
     <script type="module" src="main.js"></script>
 </body>
-  
-  </html>
+</html>
