@@ -41,7 +41,8 @@ function updateIngredientTags() {
         tag.className = `tag ${isDefault ? 'default-tag' : ''}`;
         tag.innerHTML = `
             ${ing}
-            ${isDefault ? '<small>(기본)</small>' : `<span class="remove" data-index="${index}">&times;</span>`}
+            ${isDefault ? '<small>(기본)</small>' : ''}
+            <span class="remove" data-index="${index}">&times;</span>
         `;
         ingredientTagsContainer.appendChild(tag);
     });
