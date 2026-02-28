@@ -111,7 +111,15 @@ function addIngredient() {
 async function findRecipes() {
     const t = translations[state.lang];
     const grid = document.getElementById('recipe-grid');
-    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;"><div class="loader"></div><p>AI가 최적의 레시피를 찾고 있습니다...</p></div>';
+    grid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 40px; animation: fadeIn 0.5s ease;">
+            <img src="assets/images/logo3.png" alt="Loading" style="width: 200px; height: auto; border-radius: 20px; margin-bottom: 30px; box-shadow: var(--shadow);">
+            <div class="loader-container">
+                <div class="loader"></div>
+            </div>
+            <p style="font-weight: 600; color: var(--primary-dark); font-size: 1.2rem;">AI가 최적의 레시피를 찾고 있습니다...</p>
+        </div>
+    `;
     navigateTo('recipe-section');
 
     try {
