@@ -9,8 +9,10 @@ const OpenAI = require("openai");
 
 // OpenAI API 클라이언트 초기화
 // 프로젝트의 .env 파일에 OPENAI_API_KEY가 설정되어 있어야 합니다.
+// 배포 시 분석 오류를 방지하기 위해 조건부 초기화 로직을 사용합니다.
+const apiKey = process.env.OPENAI_API_KEY || "dummy_key_for_deployment";
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: apiKey,
 });
 
 /**
