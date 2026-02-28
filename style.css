@@ -186,6 +186,18 @@ header p {
     align-items: center;
     gap: 8px;
     animation: scaleIn 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.tag.default-tag {
+    background: white;
+    border: 1px dashed var(--primary);
+    color: var(--primary-dark);
+}
+
+.tag.default-tag small {
+    opacity: 0.6;
+    font-size: 0.7rem;
 }
 
 @keyframes scaleIn {

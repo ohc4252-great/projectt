@@ -1,86 +1,108 @@
-// Recipe Data Store
+// Recipe Data Store (Popular Recipes Inspired by Top Search Results)
 const RECIPES = [
+    // --- Korean ---
     {
         id: 1,
-        name: "김치볶음밥",
+        name: "백종원 김치볶음밥",
         cuisine: "korean",
-        ingredients: ["김치", "밥", "스팸", "달걀"],
+        ingredients: ["김치", "밥", "대파", "스팸", "달걀", "설탕", "간장", "고춧가루", "식용유"],
         time: "15분",
         difficulty: "쉬움",
         emoji: "🍳",
-        steps: ["김치를 잘게 썬다.", "팬에 기름을 두르고 김치와 스팸을 볶는다.", "밥을 넣고 함께 볶는다.", "달걀 프라이를 올려 마무리한다."]
+        steps: ["대파를 잘게 썰어 파기름을 낸다.", "스팸과 김치를 넣고 충분히 볶는다.", "설탕과 간장으로 풍미를 올린다.", "밥을 넣고 섞으며 볶은 뒤 달걀 프라이를 올린다."]
     },
     {
         id: 2,
-        name: "된장찌개",
+        name: "황금레시피 된장찌개",
         cuisine: "korean",
-        ingredients: ["된장", "두부", "호박", "감자", "멸치"],
+        ingredients: ["된장", "두부", "애호박", "양파", "감자", "멸치육수", "고추장", "고춧가루", "마늘"],
         time: "20분",
         difficulty: "보통",
         emoji: "🍲",
-        steps: ["멸치 육수를 낸다.", "된장을 풀고 딱딱한 채소(감자)부터 넣는다.", "호박과 두부를 넣고 끓인다."]
+        steps: ["멸치와 다시마로 육수를 낸다.", "된장과 고추장을 3:1 비율로 푼다.", "감자, 양파, 호박 순으로 넣고 끓인다.", "두부와 다진 마늘을 넣고 마무리한다."]
     },
     {
         id: 3,
-        name: "계란말이",
+        name: "국민 반찬 제육볶음",
         cuisine: "korean",
-        ingredients: ["달걀", "파", "당근", "소금"],
-        time: "10분",
-        difficulty: "쉬움",
-        emoji: "🍱",
-        steps: ["달걀을 풀고 다진 채소를 섞는다.", "팬에 얇게 펴서 돌돌 만다."]
+        ingredients: ["돼지고기", "양파", "대파", "고추장", "고춧가루", "간장", "설탕", "다진마늘", "후추"],
+        time: "25분",
+        difficulty: "보통",
+        emoji: "🔥",
+        steps: ["고기에 설탕을 먼저 넣어 버무린다.", "양념장(고추장, 고춧가루, 간장, 마늘)을 넣고 재운다.", "팬에 고기를 볶다가 채소를 넣고 센 불에 빠르게 볶는다."]
     },
+    // --- Japanese ---
     {
         id: 4,
-        name: "초밥",
+        name: "정통 차슈동",
         cuisine: "japanese",
-        ingredients: ["생선", "밥", "식초", "와사비"],
-        time: "30분",
-        difficulty: "어려움",
-        emoji: "🍣",
-        steps: ["밥에 단촛물을 섞는다.", "생선을 손질한다.", "와사비를 올리고 밥과 합친다."]
+        ingredients: ["삼겹살", "밥", "간장", "맛술", "설탕", "생강", "대파", "양파", "식용유"],
+        time: "40분",
+        difficulty: "보통",
+        emoji: "🍚",
+        steps: ["삼겹살 겉면을 팬에 노릇하게 굽는다.", "간장, 맛술, 설탕, 생강을 넣은 소스에 고기를 졸인다.", "고기를 얇게 썰어 밥 위에 올리고 소스를 뿌린다."]
     },
     {
         id: 5,
-        name: "오야코동",
+        name: "부드러운 오야코동",
         cuisine: "japanese",
-        ingredients: ["닭고기", "달걀", "양파", "밥", "간장"],
-        time: "20분",
-        difficulty: "보통",
+        ingredients: ["닭다리살", "달걀", "양파", "밥", "쯔유", "간장", "설탕", "식용유"],
+        time: "15분",
+        difficulty: "쉬움",
         emoji: "🥣",
-        steps: ["팬에 간장 소스와 양파, 닭고기를 넣고 끓인다.", "달걀을 풀어 넣고 반숙으로 익힌 뒤 밥 위에 올린다."]
+        steps: ["팬에 쯔유 소스와 양파를 넣고 끓인다.", "한입 크기 닭고기를 넣고 익힌다.", "달걀을 대충 풀어 원을 그리듯 넣고 반숙일 때 밥에 올린다."]
     },
+    // --- Chinese ---
     {
         id: 6,
-        name: "마파두부",
+        name: "불맛 마파두부",
         cuisine: "chinese",
-        ingredients: ["두부", "돼지고기", "고추장", "전분", "파"],
+        ingredients: ["두부", "다진돼지고기", "두반장", "굴소스", "고춧가루", "전분가루", "식용유", "파", "마늘"],
         time: "20분",
         difficulty: "보통",
         emoji: "🥘",
-        steps: ["두부를 깍둑썰기한다.", "고기와 파를 볶다가 양념을 넣는다.", "두부를 넣고 전분물로 농도를 맞춘다."]
+        steps: ["파와 마늘, 고춧가루로 고추기름을 낸다.", "고기를 볶다가 두반장과 물을 넣고 끓인다.", "두부를 넣고 전분물로 걸쭉하게 농도를 맞춘다."]
     },
     {
         id: 7,
-        name: "토마토 파스타",
+        name: "초간단 계란볶음밥",
+        cuisine: "chinese",
+        ingredients: ["밥", "달걀", "대파", "굴소스", "식용유", "소금", "후추"],
+        time: "10분",
+        difficulty: "쉬움",
+        emoji: "🍛",
+        steps: ["대파를 볶아 향을 낸 뒤 달걀 스크램블을 만든다.", "밥을 넣고 고슬고슬하게 볶는다.", "굴소스로 간을 하고 소금, 후추로 마무리한다."]
+    },
+    // --- Western ---
+    {
+        id: 8,
+        name: "알리오 올리오",
         cuisine: "western",
-        ingredients: ["파스타면", "토마토소스", "마늘", "양파", "베이컨"],
+        ingredients: ["파스타면", "마늘", "올리브오일", "페페론치노", "소금", "후추", "파슬리"],
         time: "15분",
         difficulty: "쉬움",
         emoji: "🍝",
-        steps: ["면을 삶는다.", "마늘과 양파를 볶다가 소스를 넣는다.", "면을 소스에 넣고 함께 볶는다."]
+        steps: ["면을 소금물에 삶는다.", "팬에 올리브오일을 듬뿍 두르고 편마늘을 노릇하게 굽는다.", "삶은 면과 면수를 넣고 오일이 유화될 때까지 섞는다."]
     },
     {
-        id: 8,
-        name: "스테이크",
+        id: 9,
+        name: "정통 까르보나라",
         cuisine: "western",
-        ingredients: ["소고기", "소금", "후추", "로즈마리", "버터"],
-        time: "15분",
+        ingredients: ["파스타면", "베이컨", "달걀노른자", "파마산치즈", "후추", "올리브오일", "소금"],
+        time: "20분",
         difficulty: "보통",
-        emoji: "🥩",
-        steps: ["고기에 시즈닝을 한다.", "팬을 뜨겁게 달궈 고기를 굽는다.", "버터와 로즈마리로 향을 입힌다."]
+        emoji: "🧀",
+        steps: ["베이컨을 바삭하게 굽는다.", "노른자와 치즈, 후추를 섞어 소스를 만든다.", "불을 끄고 면과 소스를 섞어 잔열로 익힌다. (중요: 불을 끄고 섞어야 함)"]
     }
 ];
+
+// Cuisine Default Ingredients
+const DEFAULT_INGREDIENTS = {
+    korean: ["소금", "설탕", "후추", "고춧가루", "고추장", "진간장", "다진마늘", "식용유"],
+    japanese: ["간장", "식초", "설탕", "맛술", "식용유", "와사비"],
+    chinese: ["식용유", "고춧가루", "간장", "설탕", "굴소스", "전분가루"],
+    western: ["올리브오일", "소금", "후추", "버터", "마늘", "허브"]
+};
 
 // State Management
 let state = {
@@ -118,11 +140,12 @@ function navigateTo(stepId) {
 function updateIngredientTags() {
     ingredientTagsContainer.innerHTML = '';
     state.ingredients.forEach((ing, index) => {
+        const isDefault = DEFAULT_INGREDIENTS[state.selectedCuisine]?.includes(ing);
         const tag = document.createElement('div');
-        tag.className = 'tag';
+        tag.className = `tag ${isDefault ? 'default-tag' : ''}`;
         tag.innerHTML = `
             ${ing}
-            <span class="remove" data-index="${index}">&times;</span>
+            ${isDefault ? '<small>(기본)</small>' : `<span class="remove" data-index="${index}">&times;</span>`}
         `;
         ingredientTagsContainer.appendChild(tag);
     });
@@ -142,10 +165,11 @@ function findRecipes() {
     
     // Sort by match count
     const scored = filtered.map(recipe => {
-        const matchCount = recipe.ingredients.filter(ing => 
-            state.ingredients.some(userIng => ing.includes(userIng) || userIng.includes(ing))
-        ).length;
-        return { ...recipe, matchCount };
+        const matchedItems = recipe.ingredients.filter(recipeIng => 
+            state.ingredients.some(userIng => recipeIng.includes(userIng) || userIng.includes(recipeIng))
+        );
+        const matchCount = matchedItems.length;
+        return { ...recipe, matchCount, matchedItems };
     }).sort((a, b) => b.matchCount - a.matchCount);
 
     renderRecipes(scored);
@@ -180,15 +204,24 @@ function renderRecipes(recipes) {
 
 function showRecipeDetail(recipe) {
     modalBody.innerHTML = `
-        <h2 style="font-size: 2rem; margin-bottom: 20px;">${recipe.emoji} ${recipe.name}</h2>
-        <div style="margin-bottom: 20px;">
-            <p><strong>주재료:</strong> ${recipe.ingredients.join(', ')}</p>
-            <p><strong>소요 시간:</strong> ${recipe.time} | <strong>난이도:</strong> ${recipe.difficulty}</p>
+        <h2 style="font-size: 2rem; margin-bottom: 10px;">${recipe.emoji} ${recipe.name}</h2>
+        <div style="margin-bottom: 20px; color: #666;">
+            <p>⏱ 소요 시간: ${recipe.time} | 📊 난이도: ${recipe.difficulty}</p>
         </div>
-        <hr style="margin: 20px 0; opacity: 0.1;">
-        <h3 style="margin-bottom: 15px;">요리 순서</h3>
+        
+        <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+            <h4 style="margin-bottom: 10px;">필요한 재료</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                ${recipe.ingredients.map(ing => {
+                    const isMatched = state.ingredients.some(userIng => ing.includes(userIng) || userIng.includes(ing));
+                    return `<span style="padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; background: ${isMatched ? 'var(--primary)' : '#eee'}; color: ${isMatched ? 'white' : '#666'}">${ing}</span>`;
+                }).join('')}
+            </div>
+        </div>
+
+        <h3 style="margin-bottom: 15px; border-bottom: 2px solid var(--primary); display: inline-block;">요리 순서</h3>
         <ol style="padding-left: 20px;">
-            ${recipe.steps.map(step => `<li style="margin-bottom: 10px;">${step}</li>`).join('')}
+            ${recipe.steps.map(step => `<li style="margin-bottom: 12px; line-height: 1.5;">${step}</li>`).join('')}
         </ol>
     `;
     recipeModal.showModal();
@@ -197,9 +230,14 @@ function showRecipeDetail(recipe) {
 // Event Listeners
 cuisineCards.forEach(card => {
     card.addEventListener('click', () => {
-        state.selectedCuisine = card.dataset.cuisine;
+        const cuisine = card.dataset.cuisine;
+        state.selectedCuisine = cuisine;
+        state.ingredients = [...(DEFAULT_INGREDIENTS[cuisine] || [])];
+        
         const labels = { korean: '한식', japanese: '일식', chinese: '중식', western: '양식' };
         selectedCuisineDisplay.textContent = labels[state.selectedCuisine];
+        
+        updateIngredientTags();
         navigateTo('ingredient-section');
     });
 });
