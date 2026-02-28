@@ -282,35 +282,52 @@ header h1 {
     border: 1px solid oklch(0.9 0.02 145);
 }
 
-/* Loading & Results - 정렬 및 크기 고정 강화 */
+/* Loading & Results - 그리드 내 중앙 정렬 해결 */
 .loading-container {
+    grid-column: 1 / -1; /* 그리드 전체 너비 차지 */
     width: 100%;
-    min-height: 400px; /* 로딩 시 높이 확보 */
+    min-height: 450px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
     padding: 40px 20px;
+    margin: 0 auto;
 }
 
 .loading-video-wrapper {
-    width: 250px !important; /* 강제 고정 */
+    width: 250px !important;
     max-width: 250px;
     height: auto;
-    aspect-ratio: auto;
-    margin: 0 auto 25px;
+    margin: 0 auto 30px;
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-    display: block;
 }
 
 .loading-video {
     width: 100%;
-    height: 100%;
     display: block;
     object-fit: contain;
+}
+
+/* 단순한 스피너 스타일 (필요시 사용) */
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid var(--accent);
+    border-bottom-color: var(--primary);
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Recipe Card Styling */
