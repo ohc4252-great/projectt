@@ -23,7 +23,20 @@ export const translations = {
             japanese: "일식",
             chinese: "중식",
             western: "양식"
-        }
+        },
+        // About Page
+        aboutTitle: "서비스 소개",
+        missionTitle: "우리의 미션",
+        missionText: "'냉장고 파먹기'를 가장 쉽고 스마트하게. 버려지는 식재료를 줄이고 여러분의 고민 시간을 절약해 드립니다.",
+        howItWorksTitle: "어떻게 작동하나요?",
+        step1: "오늘 끌리는 요리 스타일을 선택합니다.",
+        step2: "주방에 있는 재료를 입력합니다.",
+        step3: "최적의 매칭 레시피를 즉시 확인합니다.",
+        // Privacy Page
+        privacyTitle: "개인정보처리방침",
+        privacyDate: "시행일: 2026년 2월 28일",
+        contactTitle: "문의",
+        contactText: "본 방침에 대한 질문이 있으시면 contact@smartrecipe.com으로 문의해 주시기 바랍니다."
     },
     en: {
         appName: "Fridge Raider",
@@ -49,6 +62,19 @@ export const translations = {
             japanese: "Japanese",
             chinese: "Chinese",
             western: "Western"
-        }
+        },
+        // About Page
+        aboutTitle: "About Us",
+        missionTitle: "Our Mission",
+        missionText: "Making 'Fridge Raiding' easy and smart. Reduce food waste and save your decision-making time.",
+        howItWorksTitle: "How It Works",
+        step1: "Select your preferred cuisine style.",
+        step2: "Enter the ingredients you have.",
+        step3: "Check out the best matching recipes instantly.",
+        // Privacy Page
+        privacyTitle: "Privacy Policy",
+        privacyDate: "Effective Date: Feb 28, 2026",
+        contactTitle: "Contact",
+        contactText: "If you have any questions about this policy, please contact us at contact@smartrecipe.com"
     }
 };
