@@ -80,13 +80,13 @@ body {
     transition: all 0.3s;
 }
 
-/* Steps Transition - 확실한 격리 */
+/* Steps Transition */
 .step {
-    display: none !important; /* 기본적으로 모두 숨김 */
+    display: none !important;
 }
 
 .step.active {
-    display: block !important; /* 활성화된 것만 표시 */
+    display: block !important;
     animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -97,7 +97,7 @@ body {
 
 /* Main Layout */
 #app {
-    max-width: 800px;
+    max-width: 1000px; /* 카드 확대를 위해 너비 증가 */
     margin: 0 auto;
     padding: 40px 20px;
 }
@@ -115,7 +115,6 @@ header {
     margin-bottom: 10px;
 }
 
-/* 2, 3단계에서는 헤더 숨김 */
 body.step-2 .hero-header,
 body.step-3 .hero-header {
     display: none;
@@ -137,13 +136,52 @@ header h1 {
 }
 
 .section-title {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 800;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
     text-align: center;
 }
 
-/* 2단계: 포근한 재료 입력 카드 */
+/* Cuisine Selector - 크기 3배 확대 적용 */
+.cuisine-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+}
+
+.cuisine-card {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 60px 20px; /* 여백 확대 */
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(0,0,0,0.03);
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cuisine-card:hover {
+    transform: translateY(-15px);
+    border-color: var(--primary);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+}
+
+.cuisine-card .emoji {
+    font-size: 9rem; /* 약 3배 확대 (3.5 -> 9) */
+    margin-bottom: 25px;
+    display: block;
+    line-height: 1;
+}
+
+.cuisine-card .label {
+    font-size: 3.5rem; /* 약 3배 확대 (1.3 -> 3.5) */
+    font-weight: 900;
+    letter-spacing: -2px;
+}
+
+/* 2단계: Cozy Card */
 .cozy-card {
     background: var(--card-white);
     padding: 50px 40px;
@@ -151,6 +189,13 @@ header h1 {
     box-shadow: var(--shadow-soft);
     border: 1px solid oklch(0.95 0.01 100);
     margin-top: 20px;
+}
+
+.subtitle {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+    font-size: 1.2rem;
 }
 
 .input-group {
@@ -164,12 +209,6 @@ header h1 {
     margin-bottom: 30px;
 }
 
-.input-group:focus-within {
-    border-color: var(--primary);
-    background: white;
-    box-shadow: 0 0 0 4px oklch(0.75 0.18 145 / 0.1);
-}
-
 #ingredient-input {
     flex: 1;
     border: none;
@@ -180,7 +219,16 @@ header h1 {
     background: transparent;
 }
 
-/* Buttons */
+/* Buttons & Action Bar - 중앙 정렬 강화 */
+.action-bar {
+    display: flex;
+    justify-content: center; /* 중앙 정렬 */
+    align-items: center;
+    gap: 20px;
+    margin-top: 50px;
+    width: 100%;
+}
+
 .primary-btn, .secondary-btn, .add-btn {
     border-radius: 50px;
     font-weight: 800;
@@ -247,37 +295,6 @@ header h1 {
     border: 1px dashed oklch(0.8 0.1 60);
 }
 
-@keyframes popIn {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
-
-/* Cuisine Grid */
-.cuisine-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 25px;
-}
-
-.cuisine-card {
-    background: white;
-    border-radius: var(--radius-md);
-    padding: 40px 20px;
-    cursor: pointer;
-    box-shadow: var(--shadow-soft);
-    border: 1px solid rgba(0,0,0,0.03);
-    transition: all 0.4s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.cuisine-card:hover {
-    transform: translateY(-10px);
-    border-color: var(--primary);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-}
-
 /* Loading & Results */
 .loading-container {
     text-align: center;
@@ -309,10 +326,18 @@ footer {
     border-top: 1px solid rgba(0,0,0,0.03);
 }
 
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
-    .cozy-card { padding: 30px 20px; }
-    .nav-brand { font-size: 1.1rem; }
-    .cuisine-grid { grid-template-columns: 1fr 1fr; }
+    .cuisine-grid { grid-template-columns: 1fr; }
+    .cuisine-card .emoji { font-size: 6rem; }
+    .cuisine-card .label { font-size: 2.5rem; }
     .action-bar { flex-direction: column; }
+    .primary-btn, .secondary-btn { width: 100%; }
 }
