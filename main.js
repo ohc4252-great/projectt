@@ -126,18 +126,26 @@ async function findRecipes() {
                 </video>
             </div>
             <div style="margin-bottom: 20px;"><div class="loader"></div></div>
-            <p style="font-weight: 700; color: var(--primary-dark); font-size: 1.2rem;">AI가 최적의 레시피를 찾고 있습니다...</p>
+            <p id="loading-text" style="font-weight: 700; color: var(--primary-dark); font-size: 1.2rem;">AI가 최적의 레시피를 찾고 있습니다...</p>
         </div>
     `;
     navigateTo('recipe-section');
 
+    const startTime = Date.now();
+    const minimumDelay = 10000; // 10 seconds
+
     try {
         const getAIRecommendations = functions.httpsCallable('getAIRecommendations');
-        const result = await getAIRecommendations({
-            ingredients: state.ingredients,
-            cuisine: state.selectedCuisine,
-            lang: state.lang
-        });
+        
+        // Run AI request and timer in parallel
+        const [result] = await Promise.all([
+            getAIRecommendations({
+                ingredients: state.ingredients,
+                cuisine: state.selectedCuisine,
+                lang: state.lang
+            }),
+            new Promise(resolve => setTimeout(resolve, minimumDelay))
+        ]);
 
         if (result.data && result.data.success) {
             renderRecipes(result.data.recipes);
@@ -146,6 +154,9 @@ async function findRecipes() {
         }
     } catch (error) {
         console.error("AI Fetch Error:", error);
+        
+        // Even if error occurs, ensure minimum delay for consistency if needed, 
+        // or just show fallback immediately after the 10s wait.
         const filtered = RECIPES.filter(recipe => recipe.cuisine === state.selectedCuisine);
         renderRecipes(filtered);
     }
