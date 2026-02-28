@@ -39,7 +39,7 @@ function applyTranslations() {
     document.getElementById('selected-cuisine-prefix').textContent = t.selectedCuisine + ": ";
     
     const ingredientInput = document.getElementById('ingredient-input');
-    ingredientInput.placeholder = t.placeholder;
+    if (ingredientInput) ingredientInput.placeholder = t.placeholder;
     
     document.getElementById('add-ingredient-btn').textContent = t.addBtn;
     document.getElementById('find-recipe-btn').textContent = t.findBtn;
@@ -49,7 +49,6 @@ function applyTranslations() {
     document.getElementById('privacy-link').textContent = t.privacy;
     document.getElementById('lang-toggle').textContent = state.lang === 'ko' ? 'English' : '한국어';
 
-    // Footer & Links translation
     const footerCopy = document.querySelector('[data-t="footerCopy"]');
     if (footerCopy) footerCopy.textContent = t.footerCopy;
     
@@ -59,7 +58,6 @@ function applyTranslations() {
     const footerPrivacy = document.querySelector('footer [data-t="privacy"]');
     if (footerPrivacy) footerPrivacy.textContent = t.privacy;
 
-    // Update Cuisine Labels
     document.querySelectorAll('.cuisine-card').forEach(card => {
         const key = card.dataset.cuisine;
         card.querySelector('.label').textContent = t.cuisines[key];
@@ -75,12 +73,19 @@ function applyTranslations() {
 function navigateTo(stepId) {
     Object.values(sections).forEach(section => section.classList.remove('active'));
     document.getElementById(stepId).classList.add('active');
+    
+    // Update body class for step-based styling (Hide logo after step 1)
+    document.body.className = '';
+    if (stepId === 'ingredient-section') document.body.classList.add('step-2');
+    if (stepId === 'recipe-section') document.body.classList.add('step-3');
+    
     state.currentStep = stepId;
     window.scrollTo(0, 0);
 }
 
 function updateIngredientTags() {
     const container = document.getElementById('ingredient-tags');
+    if (!container) return;
     container.innerHTML = '';
     const t = translations[state.lang];
     const defaults = DEFAULT_INGREDIENTS[state.lang][state.selectedCuisine] || [];
@@ -111,13 +116,17 @@ function addIngredient() {
 async function findRecipes() {
     const t = translations[state.lang];
     const grid = document.getElementById('recipe-grid');
+    
+    // Video Loading Screen
     grid.innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; padding: 40px; animation: fadeIn 0.5s ease;">
-            <img src="assets/images/logo3.png" alt="Loading" style="width: 200px; height: auto; border-radius: 20px; margin-bottom: 30px; box-shadow: var(--shadow);">
-            <div class="loader-container">
-                <div class="loader"></div>
+        <div class="loading-container">
+            <div class="loading-video-wrapper">
+                <video class="loading-video" autoplay loop muted playsinline>
+                    <source src="assets/images/logo_video 1.mp4" type="video/mp4">
+                </video>
             </div>
-            <p style="font-weight: 600; color: var(--primary-dark); font-size: 1.2rem;">AI가 최적의 레시피를 찾고 있습니다...</p>
+            <div style="margin-bottom: 20px;"><div class="loader"></div></div>
+            <p style="font-weight: 700; color: var(--primary-dark); font-size: 1.2rem;">AI가 최적의 레시피를 찾고 있습니다...</p>
         </div>
     `;
     navigateTo('recipe-section');
@@ -137,7 +146,6 @@ async function findRecipes() {
         }
     } catch (error) {
         console.error("AI Fetch Error:", error);
-        // Fallback to local recipes if AI fails
         const filtered = RECIPES.filter(recipe => recipe.cuisine === state.selectedCuisine);
         renderRecipes(filtered);
     }
@@ -169,6 +177,12 @@ function renderRecipes(recipes) {
         card.onclick = () => showRecipeDetail(recipe);
         grid.appendChild(card);
     });
+
+    // Add logo3.png at the end of results
+    const brandImg = document.createElement('img');
+    brandImg.src = 'assets/images/logo3.png';
+    brandImg.className = 'result-direction-logo';
+    grid.appendChild(brandImg);
 }
 
 function showRecipeDetail(recipe) {
@@ -225,17 +239,23 @@ function initEventListeners() {
     });
 
     document.getElementById('add-ingredient-btn').addEventListener('click', addIngredient);
-    document.getElementById('ingredient-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') addIngredient();
-    });
+    const ingredientInput = document.getElementById('ingredient-input');
+    if (ingredientInput) {
+        ingredientInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addIngredient();
+        });
+    }
 
-    document.getElementById('ingredient-tags').addEventListener('click', (e) => {
-        if (e.target.classList.contains('remove')) {
-            const index = e.target.dataset.index;
-            state.ingredients.splice(index, 1);
-            updateIngredientTags();
-        }
-    });
+    const tagsContainer = document.getElementById('ingredient-tags');
+    if (tagsContainer) {
+        tagsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove')) {
+                const index = e.target.dataset.index;
+                state.ingredients.splice(index, 1);
+                updateIngredientTags();
+            }
+        });
+    }
 
     document.getElementById('find-recipe-btn').addEventListener('click', findRecipes);
     document.getElementById('back-to-cuisine').addEventListener('click', () => {
