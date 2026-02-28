@@ -38,6 +38,16 @@ function applyTranslations() {
     document.getElementById('privacy-link').textContent = t.privacy;
     document.getElementById('lang-toggle').textContent = state.lang === 'ko' ? 'English' : '한국어';
 
+    // Footer & Links translation
+    const footerCopy = document.querySelector('[data-t="footerCopy"]');
+    if (footerCopy) footerCopy.textContent = t.footerCopy;
+    
+    const footerAbout = document.querySelector('footer [data-t="about"]');
+    if (footerAbout) footerAbout.textContent = t.about;
+    
+    const footerPrivacy = document.querySelector('footer [data-t="privacy"]');
+    if (footerPrivacy) footerPrivacy.textContent = t.privacy;
+
     // Update Cuisine Labels
     document.querySelectorAll('.cuisine-card').forEach(card => {
         const key = card.dataset.cuisine;

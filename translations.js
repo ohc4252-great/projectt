@@ -18,6 +18,7 @@ export const translations = {
         noRecipe: "해당 분야의 레시피를 찾을 수 없습니다.",
         about: "소개",
         privacy: "개인정보처리방침",
+        footerCopy: "© 2026 냉털 (Fridge Raider). All rights reserved.",
         cuisines: {
             korean: "한식",
             japanese: "일식",
@@ -27,16 +28,25 @@ export const translations = {
         // About Page
         aboutTitle: "서비스 소개",
         missionTitle: "우리의 미션",
-        missionText: "'냉장고 파먹기'를 가장 쉽고 스마트하게. 버려지는 식재료를 줄이고 여러분의 고민 시간을 절약해 드립니다.",
+        missionText: "'냉장고 파먹기'를 가장 쉽고 스마트하게. 우리는 버려지는 식재료를 줄이고, 매일 반복되는 \"오늘 뭐 먹지?\"라는 고민을 해결하기 위해 탄생했습니다. 단순한 레시피 제공을 넘어, 당신의 주방을 더욱 경제적이고 즐겁게 만드는 것이 우리의 목표입니다.",
         howItWorksTitle: "어떻게 작동하나요?",
-        step1: "오늘 끌리는 요리 스타일을 선택합니다.",
-        step2: "주방에 있는 재료를 입력합니다.",
-        step3: "최적의 매칭 레시피를 즉시 확인합니다.",
+        step1: "1. 한식, 일식, 중식, 양식 중 선호하는 스타일을 선택합니다.",
+        step2: "2. 현재 냉장고에 남아있는 재료들을 입력합니다.",
+        step3: "3. 인공지능 매칭 알고리즘이 당신의 재료로 만들 수 있는 최적의 요리를 즉시 추천합니다.",
+        valueTitle: "왜 '냉털'인가요?",
+        valueText: "우리는 단순히 많은 양의 데이터를 나열하지 않습니다. 실제 요리 현장에서 초보자도 실패하지 않도록 '구체적인 상태 묘사'와 '정확한 계량 수치'가 포함된 엄선된 레시피만을 제공합니다. 환경을 생각하는 제로 웨이스트(Zero Waste) 라이프스타일, 냉털과 함께 시작하세요.",
         // Privacy Page
         privacyTitle: "개인정보처리방침",
         privacyDate: "시행일: 2026년 2월 28일",
+        privacyIntro: "본 사이트는 사용자의 개인정보를 소중히 여기며, 관련 법령을 준수합니다.",
+        policy1Title: "1. 개인정보 수집 및 이용",
+        policy1Text: "본 서비스는 별도의 회원가입 절차가 없으며, 이름, 이메일, 연락처 등 사용자를 식별할 수 있는 정보를 직접 수집하지 않습니다. 사용자가 입력하는 재료 데이터는 오직 레시피 매칭을 위한 용도로만 사용되며, 서버에 저장되지 않고 브라우저 종료 시 삭제됩니다.",
+        policy2Title: "2. 쿠키 및 광고 게재",
+        policy2Text: "구글(Google)을 포함한 제3자 제공업체는 쿠키를 사용하여 사용자의 이전 방문 기록을 바탕으로 광고를 게재합니다. 구글의 광고 쿠키를 사용하면 구글과 그 파트너가 본 사이트 및 인터넷상의 다른 사이트 방문 기록을 토대로 사용자에게 맞춤형 광고를 제공할 수 있습니다.",
+        policy3Title: "3. 맞춤형 광고 해제",
+        policy3Text: "사용자는 구글의 '광고 설정' 페이지를 방문하여 맞춤설정 광고 게재를 해제할 수 있습니다. 또는 www.aboutads.info를 방문하여 제3자 제공업체의 맞춤설정 광고용 쿠키 사용을 차단할 수 있습니다.",
         contactTitle: "문의",
-        contactText: "본 방침에 대한 질문이 있으시면 richanseon@gmail.com으로 문의해 주시기 바랍니다."
+        contactText: "본 방침이나 서비스 이용에 관한 문의는 richanseon@gmail.com으로 연락 주시기 바랍니다."
     },
     en: {
         appName: "Fridge Raider",
@@ -57,6 +67,7 @@ export const translations = {
         noRecipe: "No recipes found for this category.",
         about: "About",
         privacy: "Privacy Policy",
+        footerCopy: "© 2026 Fridge Raider. All rights reserved.",
         cuisines: {
             korean: "Korean",
             japanese: "Japanese",
@@ -64,17 +75,26 @@ export const translations = {
             western: "Western"
         },
         // About Page
-        aboutTitle: "About Us",
+        aboutTitle: "About Our Service",
         missionTitle: "Our Mission",
-        missionText: "Making 'Fridge Raiding' easy and smart. Reduce food waste and save your decision-making time.",
+        missionText: "Making 'Fridge Raiding' easy and smart. We were born to reduce food waste and solve the daily dilemma of \"What should I eat today?\". Beyond just providing recipes, our goal is to make your kitchen more economical and enjoyable.",
         howItWorksTitle: "How It Works",
-        step1: "Select your preferred cuisine style.",
-        step2: "Enter the ingredients you have.",
-        step3: "Check out the best matching recipes instantly.",
+        step1: "1. Select your preferred style among Korean, Japanese, Chinese, or Western.",
+        step2: "2. Enter the ingredients currently left in your fridge.",
+        step3: "3. Our matching algorithm instantly recommends the best dishes you can make with your ingredients.",
+        valueTitle: "Why Fridge Raider?",
+        valueText: "We don't just list vast amounts of data. We provide only carefully selected recipes that include 'specific state descriptions' and 'precise measurements' so that even beginners won't fail. Start your eco-friendly Zero Waste lifestyle with Fridge Raider.",
         // Privacy Page
         privacyTitle: "Privacy Policy",
         privacyDate: "Effective Date: Feb 28, 2026",
+        privacyIntro: "This site values your privacy and complies with relevant laws.",
+        policy1Title: "1. Information Collection and Use",
+        policy1Text: "This service does not require registration and does not directly collect identifiable information such as name or email. Ingredient data entered by users is used solely for recipe matching and is not stored on our servers; it is deleted when the browser is closed.",
+        policy2Title: "2. Cookies and Advertising",
+        policy2Text: "Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to your website or other websites. Google's use of advertising cookies enables it and its partners to serve ads to your users based on their visit to your sites and/or other sites on the Internet.",
+        policy3Title: "3. Opting Out",
+        policy3Text: "Users may opt out of personalized advertising by visiting Google's Ads Settings. Alternatively, you can opt out of a third-party vendor's use of cookies for personalized advertising by visiting www.aboutads.info.",
         contactTitle: "Contact",
-        contactText: "If you have any questions about this policy, please contact us at richanseon@gmail.com"
+        contactText: "For inquiries regarding this policy or the service, please contact us at richanseon@gmail.com"
     }
 };
