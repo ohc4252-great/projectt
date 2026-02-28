@@ -1,6 +1,17 @@
 import { RECIPES, DEFAULT_INGREDIENTS } from './recipes.js';
 import { translations } from './translations.js';
 
+// Firebase Config
+const firebaseConfig = {
+    projectId: "fridge-raider-bc871",
+};
+
+// Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const functions = firebase.functions();
+
 // State Management
 let state = {
     lang: localStorage.getItem('lang') || 'ko',
@@ -97,10 +108,6 @@ function addIngredient() {
     }
 }
 
-// Firebase Initialization (Assume Firebase SDK is available in index.html via CDN)
-// import { getFunctions, httpsCallable } from 'firebase/functions'; // If using npm
-// For this environment, we'll use the window.firebase global or simple fetch
-
 async function findRecipes() {
     const t = translations[state.lang];
     const grid = document.getElementById('recipe-grid');
@@ -108,25 +115,15 @@ async function findRecipes() {
     navigateTo('recipe-section');
 
     try {
-        // 실제 운영 시에는 firebase.functions().httpsCallable('getAIRecommendations')를 사용합니다.
-        // 현재는 API 시뮬레이션 또는 실제 호출 로직을 구성합니다.
-        
-        const response = await fetch('https://us-central1-first-html-projcet.cloudfunctions.net/getAIRecommendations', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                data: {
-                    ingredients: state.ingredients,
-                    cuisine: state.selectedCuisine,
-                    lang: state.lang
-                }
-            })
+        const getAIRecommendations = functions.httpsCallable('getAIRecommendations');
+        const result = await getAIRecommendations({
+            ingredients: state.ingredients,
+            cuisine: state.selectedCuisine,
+            lang: state.lang
         });
 
-        const result = await response.json();
-        
-        if (result.result && result.result.success) {
-            renderRecipes(result.result.recipes);
+        if (result.data && result.data.success) {
+            renderRecipes(result.data.recipes);
         } else {
             throw new Error('AI Response Error');
         }
@@ -154,12 +151,11 @@ function renderRecipes(recipes) {
         card.innerHTML = `
             <div class="recipe-img">${recipe.emoji}</div>
             <div class="recipe-info">
-                <h3>${recipe.name[state.lang]}</h3>
+                <h3>${typeof recipe.name === 'string' ? recipe.name : recipe.name[state.lang]}</h3>
                 <div class="recipe-meta">
-                    <span>⏱ ${recipe.time[state.lang]}</span>
-                    <span>📊 ${recipe.difficulty[state.lang]}</span>
+                    <span>⏱ ${typeof recipe.time === 'string' ? recipe.time : recipe.time[state.lang]}</span>
+                    <span>📊 ${typeof recipe.difficulty === 'string' ? recipe.difficulty : recipe.difficulty[state.lang]}</span>
                 </div>
-                ${recipe.matchCount > 0 ? `<div class="match-badge">${recipe.matchCount}${t.matchCount}</div>` : ''}
             </div>
         `;
         card.onclick = () => showRecipeDetail(recipe);
@@ -171,25 +167,31 @@ function showRecipeDetail(recipe) {
     const t = translations[state.lang];
     const modal = document.getElementById('recipe-modal');
     const body = document.getElementById('modal-body');
+    
+    const recipeName = typeof recipe.name === 'string' ? recipe.name : recipe.name[state.lang];
+    const recipeTime = typeof recipe.time === 'string' ? recipe.time : recipe.time[state.lang];
+    const recipeDifficulty = typeof recipe.difficulty === 'string' ? recipe.difficulty : recipe.difficulty[state.lang];
+    const recipeIngredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : recipe.ingredients[state.lang];
+    const recipeSteps = Array.isArray(recipe.steps) ? recipe.steps : recipe.steps[state.lang];
+
     body.innerHTML = `
-        <h2 style="font-size: 2rem; margin-bottom: 10px;">${recipe.emoji} ${recipe.name[state.lang]}</h2>
+        <h2 style="font-size: 2rem; margin-bottom: 10px;">${recipe.emoji} ${recipeName}</h2>
         <div style="margin-bottom: 20px; color: #666;">
-            <p>⏱ ${recipe.time[state.lang]} | 📊 ${recipe.difficulty[state.lang]}</p>
+            <p>⏱ ${recipeTime} | 📊 ${recipeDifficulty}</p>
         </div>
         
         <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
             <h4 style="margin-bottom: 10px;">${t.ingredientsTitle}</h4>
             <div style="display: flex; flex-wrap: wrap; gap: 5px;">
-                ${recipe.ingredients[state.lang].map(ing => {
-                    const isMatched = state.ingredients.some(userIng => ing.toLowerCase().includes(userIng.toLowerCase()) || userIng.toLowerCase().includes(ing.toLowerCase()));
-                    return `<span style="padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; background: ${isMatched ? 'var(--primary)' : '#eee'}; color: ${isMatched ? 'white' : '#666'}">${ing}</span>`;
+                ${recipeIngredients.map(ing => {
+                    return `<span style="padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; background: #eee; color: #666">${ing}</span>`;
                 }).join('')}
             </div>
         </div>
 
         <h3 style="margin-bottom: 15px; border-bottom: 2px solid var(--primary); display: inline-block;">${t.stepsTitle}</h3>
         <ol style="padding-left: 20px;">
-            ${recipe.steps[state.lang].map(step => `<li style="margin-bottom: 12px; line-height: 1.5;">${step}</li>`).join('')}
+            ${recipeSteps.map(step => `<li style="margin-bottom: 12px; line-height: 1.5;">${step}</li>`).join('')}
         </ol>
     `;
     modal.showModal();
