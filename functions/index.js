@@ -1,5 +1,6 @@
 /**
  * Firebase Cloud Functions v2 - Recipe Curation Logic
+ * Node.js 22 환경 및 OpenAI gpt-4o-mini 사용
  */
 
 const { onRequest } = require("firebase-functions/v2/https");
@@ -7,11 +8,20 @@ const { defineSecret } = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
 const OpenAI = require("openai");
 
-const openAiKey = defineSecret("OPENAI_API_KEY_SECRET");
+// Secret 명칭 확인 필수: OPENAI_API_KEY
+const openAiKey = defineSecret("OPENAI_API_KEY");
 
 const LANGUAGE_STRATEGY = {
-  ko: { label: "Korean", constraint: "모든 텍스트는 반드시 한국어로 작성하세요.", suffix: " 황금레시피" },
-  en: { label: "English", constraint: "ALL fields MUST be in English.", suffix: " Recipe" }
+  ko: {
+    label: "Korean",
+    constraint: "모든 텍스트는 반드시 한국어로 작성하세요.",
+    suffix: " 황금레시피"
+  },
+  en: {
+    label: "English",
+    constraint: "ALL fields MUST be in English. No Korean characters allowed.",
+    suffix: " Recipe"
+  }
 };
 
 exports.getRecipes = onRequest({ 
@@ -20,6 +30,7 @@ exports.getRecipes = onRequest({
   maxInstances: 10,
   secrets: [openAiKey] 
 }, async (req, res) => {
+  // CORS 프리플라이트 요청 처리
   if (req.method === "OPTIONS") {
     res.set("Access-Control-Allow-Methods", "POST");
     res.set("Access-Control-Allow-Headers", "Content-Type");
@@ -28,52 +39,70 @@ exports.getRecipes = onRequest({
     return;
   }
 
+  if (req.method !== "POST") {
+    res.status(405).send("Method Not Allowed");
+    return;
+  }
+
   try {
     const body = req.body.data || req.body;
     const { ingredients, category, lang = 'ko' } = body;
     const strategy = LANGUAGE_STRATEGY[lang] || LANGUAGE_STRATEGY.ko;
 
-    const openai = new OpenAI({ apiKey: openAiKey.value() });
+    if (!ingredients || ingredients.length === 0) {
+      return res.status(200).json({ data: { recipes: [], error: "No ingredients provided" } });
+    }
+
+    const openai = new OpenAI({
+      apiKey: openAiKey.value(),
+    });
+
+    logger.info(`Requesting recipes for ${category} in ${strategy.label}`);
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: `You are a Michelin-starred chef. Provide a precision recipe analysis.
+          content: `You are a world-class Michelin chef.
           STRICT RULES:
-          1. Quantity: ALWAYS provide EXACTLY 3 different recipes.
-          2. Language: ${strategy.label}. ${strategy.constraint}
-          3. Mandatory Structure (JSON):
-          {
-            "recipes": [
-              {
-                "title": "Dish Name 1",
-                "reason": "Expert reason",
-                "essential_ingredients": ["Amount + Ingredient"],
-                "optional_ingredients": ["Amount + Ingredient"],
-                "instructions": "Step 1. ... Step 2. ..."
-              },
-              {
-                "title": "Dish Name 2",
-                "reason": "Expert reason",
-                "essential_ingredients": ["Amount + Ingredient"],
-                "optional_ingredients": ["Amount + Ingredient"],
-                "instructions": "Step 1. ... Step 2. ..."
-              },
-              {
-                "title": "Dish Name 3",
-                "reason": "Expert reason",
-                "essential_ingredients": ["Amount + Ingredient"],
-                "optional_ingredients": ["Amount + Ingredient"],
-                "instructions": "Step 1. ... Step 2. ..."
-              }
-            ]
-          }`
+          1. Output must be in ${strategy.label}. ${strategy.constraint}
+          2. Always provide EXACTLY 3 DIFFERENT recipes that best match the given cuisine and ingredients.
+          3. Even if ingredients are insufficient, suggest the most relevant dishes and mention why they are recommended.
+          4. Return ONLY a valid JSON object.
+          5. Each recipe object must have "title", "reason", "essential_ingredients" (array of amount+name), "optional_ingredients" (array), and "instructions" (string).`
         },
         {
           role: "user",
-          content: `Category: ${category}, Available Ingredients: ${Array.isArray(ingredients) ? ingredients.join(', ') : ingredients}`
+          content: `Cuisine Category: ${category}
+          Available Ingredients: ${Array.isArray(ingredients) ? ingredients.join(', ') : ingredients}
+          
+          Return JSON format: 
+          {
+            "recipes": [
+              {
+                "title": "Recipe Name 1",
+                "reason": "Expert recommendation reason",
+                "essential_ingredients": ["Ingredient 1 with amount", "Ingredient 2 with amount"],
+                "optional_ingredients": ["Optional ingredient 1", "Optional ingredient 2"],
+                "instructions": "Step-by-step cooking guide..."
+              },
+              {
+                "title": "Recipe Name 2",
+                "reason": "Expert recommendation reason",
+                "essential_ingredients": ["Ingredient 1", "Ingredient 2"],
+                "optional_ingredients": [],
+                "instructions": "Step-by-step cooking guide..."
+              },
+              {
+                "title": "Recipe Name 3",
+                "reason": "Expert recommendation reason",
+                "essential_ingredients": ["Ingredient 1", "Ingredient 2"],
+                "optional_ingredients": [],
+                "instructions": "Step-by-step cooking guide..."
+              }
+            ]
+          }`
         }
       ],
       response_format: { type: "json_object" },
@@ -82,7 +111,7 @@ exports.getRecipes = onRequest({
 
     let resultData = JSON.parse(completion.choices[0].message.content);
 
-    if (resultData.recipes) {
+    if (resultData.recipes && Array.isArray(resultData.recipes)) {
       resultData.recipes = resultData.recipes.map(recipe => {
         const keyword = recipe.title + strategy.suffix;
         return {
@@ -96,6 +125,12 @@ exports.getRecipes = onRequest({
     res.status(200).json({ data: resultData });
 
   } catch (error) {
-    res.status(500).json({ data: { error: error.message } });
+    logger.error("Backend Error:", error);
+    res.status(500).json({ 
+      data: { 
+        error: "Internal Server Error", 
+        details: error.message
+      } 
+    });
   }
 });
