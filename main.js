@@ -227,7 +227,7 @@ function showRecipeDetail(recipe) {
     const concept = recipe.concept || '';
     const reason = recipe.reason || '';
     const difficulty = recipe.difficulty || 'Normal';
-    // 조리 시간 데이터 유연하게 매칭 (다양한 필드명 대응)
+    // 조리 시간 데이터 유연하게 매칭 및 가시성 확보를 위한 기본값 설정
     const cookingTime = recipe.cooking_time || recipe.cookingTime || recipe.time || '15-20 min';
     const servings = recipe.servings || '1';
     const upgradeTip = recipe.upgrade_tip || '';
@@ -270,7 +270,7 @@ function showRecipeDetail(recipe) {
                 </div>
                 <div style="background: oklch(0.98 0.01 100); padding: 15px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05);">
                     <span style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">${t.timeLabel || '소요 시간'}</span>
-                    <span style="font-weight:700; color:var(--primary-dark);">⏱️ ${cookingTime}</span>
+                    <span style="font-weight:700; color: #333;">⏱️ ${cookingTime}</span>
                 </div>
             </div>
 
