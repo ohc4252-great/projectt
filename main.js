@@ -197,7 +197,9 @@ function renderRecipes(recipes) {
 
         // 사용자가 만족했던 카드 구조 복구
         card.innerHTML = `
-            <div class="recipe-img">🥘</div>
+            <div class="recipe-img">
+                <img src="assets/images/recipebook.png" alt="Recipe" style="width: 100px; height: 100px; object-fit: contain;">
+            </div>
             <div class="recipe-info">
                 <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; color: var(--primary-dark);">${title}</h3>
                 <p style="font-size: 0.95rem; color: #666; font-weight: 600; line-height: 1.4;">${reason}</p>
