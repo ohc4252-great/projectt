@@ -1,7 +1,7 @@
 import { translations } from './translations.js';
 
 /**
- * 기본 재료 데이터 (recipes.js가 삭제되었으므로 필요한 최소 데이터만 정의)
+ * 기본 재료 데이터
  */
 const DEFAULT_INGREDIENTS = {
     ko: { korean: ["고추장", "간장"], japanese: ["미소", "간장"], chinese: ["굴소스", "식용유"], western: ["올리브유", "소금"] },
@@ -195,42 +195,71 @@ function renderRecipes(recipes) {
 }
 
 function showRecipeDetail(recipe) {
+    console.log("레시피 상세 데이터:", recipe);
+
     const t = translations[state.lang];
     const modal = document.getElementById('recipe-modal');
     const body = document.getElementById('modal-body');
     
-    const title = recipe.title || recipe.name || '';
+    // 데이터 추출 (모든 가능성 염두)
+    const title = recipe.title || recipe.name || '추천 요리';
     const reason = recipe.reason || '';
-    const ingredients = recipe.ingredients_needed || recipe.ingredients || [];
-    const instructions = recipe.instructions || '';
+    const instructions = recipe.instructions || '조리 방법은 검색을 통해 확인해 주세요.';
     const youtubeLink = recipe.youtube_search_link || '';
-    const googleKeyword = recipe.google_search_keyword || '';
+    const googleKeyword = recipe.google_search_keyword || title;
+
+    // 🔥 재료 데이터 필드명 유연하게 처리
+    let essential = recipe.essential_ingredients || recipe.ingredients_needed || recipe.ingredients || [];
+    let optional = recipe.optional_ingredients || [];
+
+    // 배열이 아니면 배열로 변환
+    if (!Array.isArray(essential)) essential = essential ? [essential] : [];
+    if (!Array.isArray(optional)) optional = optional ? [optional] : [];
 
     body.innerHTML = `
         <div style="padding: 20px;">
             <h2 style="font-size: 1.8rem; margin-bottom: 15px; font-weight: 800; color: var(--primary-dark);">🥘 ${title}</h2>
-            <p style="background: var(--accent); padding: 15px 20px; border-radius: 16px; margin-bottom: 25px; font-weight: 600; color: oklch(0.3 0.1 60); line-height: 1.6;">
-                <span style="display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; opacity: 0.7;">${t.recommendReason}</span>
+            
+            <div style="background: var(--accent); padding: 15px 20px; border-radius: 16px; margin-bottom: 25px; font-weight: 600; color: oklch(0.3 0.1 60); line-height: 1.6;">
+                <span style="display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; opacity: 0.7;">${t.recommendReason || '추천 이유'}</span>
                 ${reason}
-            </p>
-            <div style="background: oklch(0.98 0.01 100); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.05);">
-                <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.ingredientsTitle}</h4>
-                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                    ${ingredients.map(ing => `<span style="padding: 6px 12px; border-radius: 50px; font-size: 0.9rem; background: white; color: #444; border: 1px solid rgba(0,0,0,0.05); font-weight: 600;">${ing}</span>`).join('')}
-                </div>
             </div>
+            
+            <div style="background: oklch(0.98 0.01 100); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.05);">
+                <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.ingredientsTitle || '필요한 재료'}</h4>
+                
+                <div style="margin-bottom: 15px;">
+                    <div style="font-size: 0.85rem; font-weight: 800; color: #e67e22; margin-bottom: 8px;">📍 ${t.essentialLabel || '필수재료'}</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        ${essential.length > 0 ? 
+                          essential.map(ing => `<span style="padding: 6px 12px; border-radius: 50px; font-size: 0.85rem; background: #fff4e6; color: #d35400; border: 1px solid #ffe8cc; font-weight: 600;">${ing}</span>`).join('') 
+                          : `<span style="color: #999; font-size: 0.9rem;">재료 정보를 읽어올 수 없습니다.</span>`}
+                    </div>
+                </div>
+
+                ${optional.length > 0 ? `
+                <div>
+                    <div style="font-size: 0.85rem; font-weight: 800; color: #7f8c8d; margin-bottom: 8px;">💡 ${t.optionalLabel || '있으면 좋은 재료'}</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        ${optional.map(ing => `<span style="padding: 6px 12px; border-radius: 50px; font-size: 0.85rem; background: #f8f9fa; color: #7f8c8d; border: 1px solid #eee; font-weight: 600;">${ing}</span>`).join('')}
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+
             <div style="background: white; padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.05);">
-                <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.stepsTitle}</h4>
+                <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.stepsTitle || '조리 순서'}</h4>
                 <div style="line-height: 1.7; color: #444; white-space: pre-line; font-weight: 500;">
                     ${instructions}
                 </div>
             </div>
-            <div class="search-actions" style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
-                <a href="${youtubeLink}" target="_blank" class="youtube-btn" style="text-decoration: none;">
-                    <span style="font-size: 1.2rem;">📺</span> ${t.youtubeBtn}
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+                <a href="${youtubeLink}" target="_blank" style="text-decoration: none; display: block; background: #FF0000; color: white; padding: 15px; border-radius: 12px; text-align: center; font-weight: 800; font-size: 1rem;">
+                    📺 ${t.youtubeBtn || '유튜브 레시피'}
                 </a>
-                <a href="https://www.google.com/search?q=${encodeURIComponent(googleKeyword)}" target="_blank" class="google-btn" style="text-decoration: none;">
-                    <span style="font-size: 1.2rem;">🔍</span> ${t.googleBtn}
+                <a href="https://www.google.com/search?q=${encodeURIComponent(googleKeyword)}" target="_blank" style="text-decoration: none; display: block; background: #4285F4; color: white; padding: 15px; border-radius: 12px; text-align: center; font-weight: 800; font-size: 1rem;">
+                    🔍 ${t.googleBtn || '구글 검색'}
                 </a>
             </div>
         </div>
@@ -245,7 +274,7 @@ function initEventListeners() {
         langToggle.addEventListener('click', () => {
             state.lang = state.lang === 'ko' ? 'en' : 'ko';
             localStorage.setItem('lang', state.lang);
-            state.ingredients = []; // 언어 전환 시 재료 초기화
+            state.ingredients = [];
             applyTranslations();
         });
     }

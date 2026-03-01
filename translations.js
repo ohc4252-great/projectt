@@ -14,6 +14,8 @@ export const translations = {
         matchCount: "개 재료 일치",
         defaultLabel: "(기본)",
         ingredientsTitle: "필요한 재료",
+        essentialLabel: "필수재료",
+        optionalLabel: "있으면 좋은 재료",
         stepsTitle: "요리 순서",
         noRecipe: "해당 분야의 레시피를 찾을 수 없습니다.",
         loadingMsg: "AI가 최적의 레시피를 찾고 있습니다...",

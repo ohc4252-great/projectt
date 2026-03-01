@@ -64,34 +64,33 @@ exports.getRecipes = onRequest({
       messages: [
         {
           role: "system",
-          content: `You are an expert chef who can suggest recipes with any given ingredients.
+          content: `You are a Michelin-starred professional chef. Your task is to provide a "Precision Recipe Analysis".
+          
           STRICT RULES:
-          1. Output must be in ${strategy.label}. ${strategy.constraint}
-          2. Always provide exactly 3 recipes that best match the given cuisine and ingredients.
-          3. Even if ingredients are insufficient, suggest the most relevant dishes and mention why they are recommended.
-          4. Return ONLY a valid JSON object.
-          5. Each recipe object must have "title", "reason", "ingredients_needed", and "instructions" (as a string or array of steps).`
+          1. Language: Output MUST be in ${strategy.label}. ${strategy.constraint}
+          2. Precision Analysis: Each ingredient MUST include specific measurements (e.g., "1/2 Onion, diced", "2 tbsp Soy Sauce").
+          3. Filtering: ONLY suggest recipes where user's ingredients cover 100% of "essential_ingredients".
+          4. Search: Use CLEAN, STANDARD dish names only. ABSOLUTELY NO names of people or chefs.
+          5. Response Format: You MUST return a JSON object with EXACTLY this structure:
+{
+"recipes": [
+    {
+      "title": "Dish Name",
+      "reason": "Expert analysis",
+      "ingredients": ["Measurement + Ingredient A", "Measurement + Ingredient B", "Optional Item + Measurement"],
+      "instructions": "Professional step-by-step guide"
+    }
+  ]
+}`
         },
         {
           role: "user",
           content: `Cuisine Category: ${category}
-          Available Ingredients: ${Array.isArray(ingredients) ? ingredients.join(', ') : ingredients}
-          
-          Return JSON format: 
-          {
-            "recipes": [
-              {
-                "title": "Recipe Name",
-                "reason": "Brief explanation of why this is recommended based on ingredients",
-                "ingredients_needed": ["ingredient 1", "ingredient 2", "..."],
-                "instructions": "1. Step 1\n2. Step 2\n3. Step 3..."
-              }
-            ]
-          }`
+          Available Ingredients: ${Array.isArray(ingredients) ? ingredients.join(', ') : ingredients}`
         }
       ],
       response_format: { type: "json_object" },
-      temperature: 0.8,
+      temperature: 0.7,
     });
 
     let resultData = JSON.parse(completion.choices[0].message.content);
@@ -114,8 +113,7 @@ exports.getRecipes = onRequest({
     res.status(500).json({ 
       data: { 
         error: "Internal Server Error", 
-        details: error.message,
-        stack: error.stack // 디버깅을 위해 일시적으로 추가
+        details: error.message
       } 
     });
   }
