@@ -235,7 +235,12 @@ function showRecipeDetail(recipe) {
     // 백엔드 필드명에 맞춰 유연하게 처리
     const ingredients = recipe.essential_ingredients || recipe.ingredients_needed || recipe.ingredients || [];
     const minimalExtra = recipe.minimal_extra_ingredients || recipe.optional_ingredients || [];
-    const instructions = recipe.instructions || '';
+    let instructions = recipe.instructions || '';
+    
+    // 요리 순서 줄바꿈 보정: "1.", "Step", "단계" 등으로 시작하는 부분 앞에 줄바꿈 추가
+    if (typeof instructions === 'string') {
+        instructions = instructions.replace(/([^\n])(\d+\. |Step \d+:?|단계 \d+:?)/g, '$1\n$2');
+    }
     
     // 유튜브/구글 검색 링크 동적 생성 (기존 버튼 유지 목적)
     const searchQuery = encodeURIComponent(`${state.lang === 'ko' ? '초간단' : 'easy'} ${title} ${t.cuisines[state.selectedCuisine] || ''} recipe`);
