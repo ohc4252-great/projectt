@@ -195,11 +195,11 @@ function renderRecipes(recipes) {
         const title = recipe.title || recipe.name || '';
         const reason = recipe.reason || '';
 
-        // 사용자가 만족했던 카드 구조 복구 (경로 `./` 제거 및 절대 경로 느낌의 상대 경로 시도)
+        // 사용자가 만족했던 카드 구조 복구 (이미지 크기 2배인 200px로 확대)
         card.innerHTML = `
             <div class="recipe-img">
                 <img src="assets/images/recipebook.png" alt="Recipe" 
-                     style="width: 100px; height: 100px; object-fit: contain;"
+                     style="width: 200px; height: 200px; object-fit: contain;"
                      onerror="this.style.display='none'; this.parentElement.innerText='🥘'; this.parentElement.style.fontSize='5rem';">
             </div>
             <div class="recipe-info">
@@ -227,9 +227,9 @@ function showRecipeDetail(recipe) {
     const concept = recipe.concept || '';
     const reason = recipe.reason || '';
     const difficulty = recipe.difficulty || 'Normal';
-    const cookingTime = recipe.cooking_time || '';
+    // 조리 시간 데이터 유연하게 매칭 (다양한 필드명 대응)
+    const cookingTime = recipe.cooking_time || recipe.cookingTime || recipe.time || '15-20 min';
     const servings = recipe.servings || '1';
-    const tasteProfile = recipe.taste_profile || '';
     const upgradeTip = recipe.upgrade_tip || '';
     
     // 백엔드 필드명에 맞춰 유연하게 처리
