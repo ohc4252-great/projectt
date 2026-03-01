@@ -141,17 +141,28 @@ async function findRecipes() {
             })
         });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.data?.details || `Server Error (${response.status})`);
+        }
+
         const result = await response.json();
-        const recipes = result.data ? (result.data.recipes || []) : (result.recipes || []);
+        const recipes = result.data?.recipes || [];
         
         if (recipes.length > 0) {
             renderRecipes(recipes);
         } else {
-            throw new Error('No recipes found');
+            throw new Error(state.lang === 'ko' ? 'AI가 레시피를 생성하지 못했습니다. 재료를 더 추가해보세요.' : 'AI could not generate recipes. Try adding more ingredients.');
         }
     } catch (error) {
         console.error("AI Error:", error);
-        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px; font-weight: 600;">${t.noRecipe}</p>`;
+        grid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                <p style="font-weight: 600; color: #e74c3c; margin-bottom: 10px;">${t.noRecipe}</p>
+                <small style="color: #999; display: block;">${error.message}</small>
+                <button onclick="location.reload()" style="margin-top: 20px; padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer;">다시 시도</button>
+            </div>
+        `;
     }
 }
 
@@ -191,6 +202,7 @@ function showRecipeDetail(recipe) {
     const title = recipe.title || recipe.name || '';
     const reason = recipe.reason || '';
     const ingredients = recipe.ingredients_needed || recipe.ingredients || [];
+    const instructions = recipe.instructions || '';
     const youtubeLink = recipe.youtube_search_link || '';
     const googleKeyword = recipe.google_search_keyword || '';
 
@@ -201,10 +213,16 @@ function showRecipeDetail(recipe) {
                 <span style="display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; opacity: 0.7;">${t.recommendReason}</span>
                 ${reason}
             </p>
-            <div style="background: oklch(0.98 0.01 100); padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.05);">
+            <div style="background: oklch(0.98 0.01 100); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.05);">
                 <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.ingredientsTitle}</h4>
                 <div style="display: flex; flex-wrap: wrap; gap: 8px;">
                     ${ingredients.map(ing => `<span style="padding: 6px 12px; border-radius: 50px; font-size: 0.9rem; background: white; color: #444; border: 1px solid rgba(0,0,0,0.05); font-weight: 600;">${ing}</span>`).join('')}
+                </div>
+            </div>
+            <div style="background: white; padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.05);">
+                <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.stepsTitle}</h4>
+                <div style="line-height: 1.7; color: #444; white-space: pre-line; font-weight: 500;">
+                    ${instructions}
                 </div>
             </div>
             <div class="search-actions" style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
