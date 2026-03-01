@@ -253,7 +253,6 @@ function showRecipeDetail(recipe) {
                 <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--primary-dark); flex: 1;">🥘 ${title}</h2>
                 <div style="display: flex; gap: 8px;">
                     <span class="badge difficulty">${difficulty}</span>
-                    <span class="badge time">⏱️ ${cookingTime}</span>
                 </div>
             </div>
             
@@ -270,8 +269,8 @@ function showRecipeDetail(recipe) {
                     <span style="font-weight:700; color:var(--primary-dark);">${servings}</span>
                 </div>
                 <div style="background: oklch(0.98 0.01 100); padding: 15px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05);">
-                    <span style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">Taste</span>
-                    <span style="font-weight:700; color:var(--primary-dark);">${tasteProfile}</span>
+                    <span style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">${t.timeLabel || '소요 시간'}</span>
+                    <span style="font-weight:700; color:var(--primary-dark);">⏱️ ${cookingTime}</span>
                 </div>
             </div>
 
