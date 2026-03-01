@@ -114,7 +114,7 @@ async function findRecipes() {
                 </video>
             </div>
             <div style="margin-bottom: 20px;"><div class="loader"></div></div>
-            <p style="font-weight: 700; color: var(--primary-dark); font-size: 1.2rem;">AI가 최적의 레시피를 찾고 있습니다...</p>
+            <p style="font-weight: 700; color: var(--primary-dark); font-size: 1.2rem;">${t.loadingMsg}</p>
         </div>
     `;
     navigateTo('recipe-section');
@@ -126,7 +126,8 @@ async function findRecipes() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 ingredients: state.ingredients,
-                category: state.selectedCuisine
+                category: state.selectedCuisine,
+                lang: state.lang
             })
         });
 
@@ -196,7 +197,7 @@ function showRecipeDetail(recipe) {
             <h2 style="font-size: 1.8rem; margin-bottom: 15px; font-weight: 800; color: var(--primary-dark);">🥘 ${title}</h2>
             
             <p style="background: var(--accent); padding: 15px 20px; border-radius: 16px; margin-bottom: 25px; font-weight: 600; color: oklch(0.3 0.1 60); line-height: 1.6;">
-                <span style="display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; opacity: 0.7;">추천 사유</span>
+                <span style="display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; opacity: 0.7;">${t.recommendReason}</span>
                 ${reason}
             </p>
 
@@ -209,10 +210,10 @@ function showRecipeDetail(recipe) {
 
             <div class="search-actions" style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
                 <a href="${youtubeLink}" target="_blank" class="youtube-btn" style="text-decoration: none;">
-                    <span style="font-size: 1.2rem;">📺</span> 유튜브에서 레시피 영상 보기
+                    <span style="font-size: 1.2rem;">📺</span> ${t.youtubeBtn}
                 </a>
                 <a href="https://www.google.com/search?q=${encodeURIComponent(googleKeyword)}" target="_blank" class="google-btn" style="text-decoration: none;">
-                    <span style="font-size: 1.2rem;">🔍</span> 구글에서 상세 레시피 검색
+                    <span style="font-size: 1.2rem;">🔍</span> ${t.googleBtn}
                 </a>
             </div>
         </div>
