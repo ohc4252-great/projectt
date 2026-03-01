@@ -393,10 +393,48 @@ header h1 {
     border: none;
     border-radius: var(--radius-lg);
     padding: 0;
-    max-width: 550px;
-    width: 90%;
+    max-width: 750px; /* 기존 550px에서 확장 */
+    width: 95%;
+    max-height: 85vh;
     margin: auto;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+}
+
+#modal-body {
+    max-height: calc(85vh - 20px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
+}
+
+#modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+#modal-body::-webkit-scrollbar-thumb {
+    background-color: var(--primary);
+    border-radius: 10px;
+}
+
+.badge {
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.badge.difficulty {
+    background: var(--primary);
+    color: white;
+}
+
+.badge.time {
+    background: var(--accent);
+    color: oklch(0.3 0.1 60);
 }
 
 #recipe-modal::backdrop {

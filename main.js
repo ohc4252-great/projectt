@@ -220,40 +220,79 @@ function showRecipeDetail(recipe) {
     const body = document.getElementById('modal-body');
     
     const title = recipe.title || recipe.name || '';
+    const concept = recipe.concept || '';
     const reason = recipe.reason || '';
+    const difficulty = recipe.difficulty || 'Normal';
+    const cookingTime = recipe.cooking_time || '';
+    const servings = recipe.servings || '1';
+    const tasteProfile = recipe.taste_profile || '';
+    const upgradeTip = recipe.upgrade_tip || '';
+    
     // 백엔드 필드명에 맞춰 유연하게 처리
     const ingredients = recipe.essential_ingredients || recipe.ingredients_needed || recipe.ingredients || [];
-    const optional = recipe.optional_ingredients || [];
+    const minimalExtra = recipe.minimal_extra_ingredients || recipe.optional_ingredients || [];
     const instructions = recipe.instructions || '';
-    const youtubeLink = recipe.youtube_search_link || '';
-    const googleKeyword = recipe.google_search_keyword || '';
+    
+    // 유튜브/구글 검색 링크 동적 생성 (기존 버튼 유지 목적)
+    const searchQuery = encodeURIComponent(`${state.lang === 'ko' ? '초간단' : 'easy'} ${title} ${t.cuisines[state.selectedCuisine] || ''} recipe`);
+    const youtubeLink = `https://www.youtube.com/results?search_query=${searchQuery}`;
+    const googleKeyword = title;
 
     body.innerHTML = `
         <div style="padding: 20px;">
-            <h2 style="font-size: 1.8rem; margin-bottom: 15px; font-weight: 800; color: var(--primary-dark);">🥘 ${title}</h2>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--primary-dark); flex: 1;">🥘 ${title}</h2>
+                <div style="display: flex; gap: 8px;">
+                    <span class="badge difficulty">${difficulty}</span>
+                    <span class="badge time">⏱️ ${cookingTime}</span>
+                </div>
+            </div>
+            
+            <p style="font-size: 1.1rem; color: #555; font-weight: 700; margin-bottom: 10px; border-left: 4px solid var(--accent); padding-left: 12px;">"${concept}"</p>
+            
             <p style="background: var(--accent); padding: 15px 20px; border-radius: 16px; margin-bottom: 25px; font-weight: 600; color: oklch(0.3 0.1 60); line-height: 1.6;">
                 <span style="display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; opacity: 0.7;">${t.recommendReason}</span>
                 ${reason}
             </p>
-            <div style="background: oklch(0.98 0.01 100); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.05);">
-                <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.ingredientsTitle}</h4>
-                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                    ${ingredients.map(ing => `<span style="padding: 6px 12px; border-radius: 50px; font-size: 0.9rem; background: white; color: #444; border: 1px solid rgba(0,0,0,0.05); font-weight: 600;">${ing}</span>`).join('')}
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div style="background: oklch(0.98 0.01 100); padding: 15px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05);">
+                    <span style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">${t.servingsLabel || '인분'}</span>
+                    <span style="font-weight:700; color:var(--primary-dark);">${servings}</span>
+                </div>
+                <div style="background: oklch(0.98 0.01 100); padding: 15px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05);">
+                    <span style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">Taste</span>
+                    <span style="font-weight:700; color:var(--primary-dark);">${tasteProfile}</span>
                 </div>
             </div>
-            ${optional.length > 0 ? `
-            <div style="background: oklch(0.98 0.01 100); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.05);">
-                <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.optionalLabel || '있으면 좋은 재료'}</h4>
+
+            <div style="background: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.ingredientsTitle}</h4>
                 <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                    ${optional.map(ing => `<span style="padding: 6px 12px; border-radius: 50px; font-size: 0.9rem; background: white; color: #777; border: 1px solid rgba(0,0,0,0.05); font-weight: 500;">${ing}</span>`).join('')}
+                    ${ingredients.map(ing => `<span style="padding: 6px 12px; border-radius: 50px; font-size: 0.9rem; background: var(--secondary); color: #444; border: 1px solid rgba(0,0,0,0.05); font-weight: 600;">${ing}</span>`).join('')}
                 </div>
-            </div>` : ''}
-            <div style="background: white; padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.05);">
+                ${minimalExtra.length > 0 ? `
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #eee;">
+                    <h5 style="margin-bottom: 10px; font-size: 0.9rem; font-weight: 700; color: #777;">${t.minimalExtraLabel || '추가 필요 재료'}</h5>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                        ${minimalExtra.map(ing => `<span style="padding: 4px 10px; border-radius: 50px; font-size: 0.85rem; background: #f5f5f5; color: #666; font-weight: 500;">${ing}</span>`).join('')}
+                    </div>
+                </div>` : ''}
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.05);">
                 <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.stepsTitle}</h4>
-                <div style="line-height: 1.7; color: #444; white-space: pre-line; font-weight: 500;">
+                <div style="line-height: 1.8; color: #444; white-space: pre-line; font-weight: 500;">
                     ${instructions}
                 </div>
             </div>
+
+            ${upgradeTip ? `
+            <div style="background: oklch(0.95 0.05 90); padding: 18px; border-radius: 18px; margin-bottom: 30px; border: 1px solid oklch(0.9 0.05 90);">
+                <h4 style="margin-bottom: 8px; font-size: 1rem; font-weight: 800; color: oklch(0.4 0.1 90);">💡 ${t.upgradeTipLabel || '맛있게 만드는 팁'}</h4>
+                <p style="font-size: 0.95rem; color: oklch(0.3 0.05 90); font-weight: 600; line-height: 1.5;">${upgradeTip}</p>
+            </div>` : ''}
+
             <div class="search-actions" style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
                 <a href="${youtubeLink}" target="_blank" class="youtube-btn" style="text-decoration: none;">
                     <span style="font-size: 1.2rem;">📺</span> ${t.youtubeBtn}
