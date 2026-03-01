@@ -1,6 +1,6 @@
 /**
  * Firebase Cloud Functions v2 - Recipe Curation Logic
- * Node.js 22 환경 및 OpenAI gpt-4o-mini 사용
+ * Node.js 20 환경 및 OpenAI gpt-4o-mini 사용
  */
 
 const { onRequest } = require("firebase-functions/v2/https");
