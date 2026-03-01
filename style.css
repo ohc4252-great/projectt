@@ -169,10 +169,10 @@ header h1 {
 }
 
 .cuisine-card .cuisine-image {
-    width: 6.4rem;
-    height: 6.4rem;
+    width: 12.8rem;
+    height: 12.8rem;
     object-fit: contain;
-    margin-bottom: 18px;
+    margin-bottom: 36px;
     display: block;
 }
 
