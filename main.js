@@ -300,6 +300,9 @@ function showRecipeDetail(recipe) {
                 <a href="https://www.google.com/search?q=${encodeURIComponent(googleKeyword)}" target="_blank" class="google-btn" style="text-decoration: none;">
                     <span style="font-size: 1.2rem;">🔍</span> ${t.googleBtn}
                 </a>
+                <a href="https://www.coupang.com/np/search?component=&q=${encodeURIComponent(recipe.name + ' 재료')}" target="_blank" class="coupang-btn" style="text-decoration: none;">
+                    <span style="font-size: 1.2rem;">🛒</span> ${t.coupangBtn}
+                </a>
             </div>
         </div>
     `;
