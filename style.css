@@ -387,7 +387,7 @@ header h1 {
 
 .youtube-btn { background: #FF0000; color: white; }
 .google-btn { background: #4285F4; color: white; }
-.coupang-btn { background: #0089ff; color: white; }
+.coupang-btn { background: oklch(0.85 0.12 145); color: oklch(0.3 0.1 145); }
 
 /* Modal */
 #recipe-modal {
