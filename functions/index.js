@@ -141,6 +141,10 @@ exports.getRecipes = onRequest({
 
 try {
   resultData = JSON.parse(completion.choices[0].message.content);
+  resultData.recipes = resultData.recipes.map(r => ({
+    ...r,
+    cooking_time: r.cooking_time || r.cookingTime || r.time || "30분"
+  }));
 } catch (e) {
   logger.error("Invalid JSON from AI");
   return res.status(500).json({ data: { error: "AI response format error" }});
