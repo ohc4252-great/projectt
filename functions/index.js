@@ -8,8 +8,8 @@ const { defineSecret } = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
 const OpenAI = require("openai");
 
-// Secret 명칭 확인 필수: OPENAI_API_SECRET
-const openAiKey = defineSecret("OPENAI_API_SECRET");
+// Secret 명칭 확인 필수: OPENAI_API_KEY
+const openAiKey = defineSecret("OPENAI_API_KEY");
 
 const LANGUAGE_STRATEGY = {
   ko: {
