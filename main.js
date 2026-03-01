@@ -226,6 +226,8 @@ function initEventListeners() {
     document.getElementById('lang-toggle').addEventListener('click', () => {
         state.lang = state.lang === 'ko' ? 'en' : 'ko';
         localStorage.setItem('lang', state.lang);
+        // Clear ingredients when switching language to avoid mixed-language processing
+        state.ingredients = [];
         applyTranslations();
     });
 
