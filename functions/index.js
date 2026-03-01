@@ -41,12 +41,28 @@ exports.getRecipes = onRequest({
         {
           role: "system",
           content: `You are a Michelin-starred chef. Provide a precision recipe analysis.
-          1. Language: ${strategy.label}. ${strategy.constraint}
-          2. Mandatory Structure (JSON):
+          STRICT RULES:
+          1. Quantity: ALWAYS provide EXACTLY 3 different recipes.
+          2. Language: ${strategy.label}. ${strategy.constraint}
+          3. Mandatory Structure (JSON):
           {
             "recipes": [
               {
-                "title": "Dish Name",
+                "title": "Dish Name 1",
+                "reason": "Expert reason",
+                "essential_ingredients": ["Amount + Ingredient"],
+                "optional_ingredients": ["Amount + Ingredient"],
+                "instructions": "Step 1. ... Step 2. ..."
+              },
+              {
+                "title": "Dish Name 2",
+                "reason": "Expert reason",
+                "essential_ingredients": ["Amount + Ingredient"],
+                "optional_ingredients": ["Amount + Ingredient"],
+                "instructions": "Step 1. ... Step 2. ..."
+              },
+              {
+                "title": "Dish Name 3",
                 "reason": "Expert reason",
                 "essential_ingredients": ["Amount + Ingredient"],
                 "optional_ingredients": ["Amount + Ingredient"],
@@ -57,7 +73,7 @@ exports.getRecipes = onRequest({
         },
         {
           role: "user",
-          content: `Category: ${category}, Ingredients: ${ingredients}`
+          content: `Category: ${category}, Available Ingredients: ${Array.isArray(ingredients) ? ingredients.join(', ') : ingredients}`
         }
       ],
       response_format: { type: "json_object" },
