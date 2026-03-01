@@ -4,14 +4,12 @@
  */
 
 const { onRequest } = require("firebase-functions/v2/https");
+const { defineSecret } = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
 const OpenAI = require("openai");
 
-// OpenAI API 클라이언트 초기화
-const apiKey = process.env.OPENAI_API_KEY || "dummy_key_for_deployment";
-const openai = new OpenAI({
-  apiKey: apiKey,
-});
+// Secret Manager에서 OPENAI_API_KEY 정의 (보안 강화)
+const openAiKey = defineSecret("OPENAI_API_KEY");
 
 /**
  * [Language Strategy Database]
@@ -24,18 +22,23 @@ const LANGUAGE_STRATEGY = {
   },
   en: {
     label: "English",
-    constraint: "FORBIDDEN: DO NOT USE KOREAN CHARACTERS. ALL output MUST be in English. Even if the user provides ingredients in Korean, you MUST translate them and provide the recipe title, reason, and ingredients in English only. (e.g., 'Yangnyeom Chicken' -> 'Korean Fried Chicken')",
+    constraint: "FORBIDDEN: DO NOT USE KOREAN CHARACTERS. ALL output MUST be in English. Even if the user provides ingredients in Korean, you MUST translate them and provide the recipe title, reason, and ingredients in English only.",
     suffix: " Recipe"
   }
 };
 
-exports.getRecipes = onRequest({ cors: true, timeoutSeconds: 60, maxInstances: 10 }, async (req, res) => {
+exports.getRecipes = onRequest({ 
+  cors: true, 
+  timeoutSeconds: 60, 
+  maxInstances: 10,
+  secrets: [openAiKey] // 함수가 Secret에 접근할 수 있도록 권한 부여
+}, async (req, res) => {
   if (req.method !== "POST") {
     res.status(405).send("Method Not Allowed");
     return;
   }
 
-  // 데이터 추출 및 구조 정규화
+  // 데이터 추출
   const body = req.body.data || req.body;
   const { ingredients, category, lang = 'ko' } = body;
   const strategy = LANGUAGE_STRATEGY[lang] || LANGUAGE_STRATEGY.ko;
@@ -44,6 +47,11 @@ exports.getRecipes = onRequest({ cors: true, timeoutSeconds: 60, maxInstances: 1
     res.status(400).json({ data: { error: "Missing required fields" } });
     return;
   }
+
+  // OpenAI 클라이언트 초기화 (Secret 값 사용)
+  const openai = new OpenAI({
+    apiKey: openAiKey.value(),
+  });
 
   try {
     logger.info(`Request for ${strategy.label} - Category: ${category}`);
@@ -79,12 +87,11 @@ Recommend 3 actual, verified recipes based on the user's ingredients.
         }
       ],
       response_format: { type: "json_object" },
-      temperature: 0, // 결과의 일관성을 위해 0으로 설정
+      temperature: 0,
     });
 
     let resultData = JSON.parse(completion.choices[0].message.content);
 
-    // 검색 키워드 및 링크 생성
     if (resultData.recipes && Array.isArray(resultData.recipes)) {
       resultData.recipes = resultData.recipes.map(recipe => {
         const keyword = recipe.title + strategy.suffix;
