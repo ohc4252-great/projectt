@@ -227,8 +227,8 @@ function showRecipeDetail(recipe) {
     const concept = recipe.concept || '';
     const reason = recipe.reason || '';
     const difficulty = recipe.difficulty || 'Normal';
-    // 조리 시간 데이터 유연하게 매칭 및 가시성 확보를 위한 기본값 설정
-    const cookingTime = recipe.cooking_time || recipe.cookingTime || recipe.time || '15-20 min';
+    // 조리 시간 데이터 매칭 로직 강화 (Snake Case, Camel Case, 단순 Time 필드 모두 확인)
+    const cookingTime = recipe.cooking_time || recipe.cookingTime || recipe.time || (state.lang === 'ko' ? '시간 정보 없음' : 'No time info');
     const servings = recipe.servings || '1';
     const upgradeTip = recipe.upgrade_tip || '';
     
