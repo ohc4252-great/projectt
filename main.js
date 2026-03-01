@@ -195,12 +195,12 @@ function renderRecipes(recipes) {
         const title = recipe.title || recipe.name || '';
         const reason = recipe.reason || '';
 
-        // 사용자가 만족했던 카드 구조 복구 (경로 및 에러 핸들링 추가)
+        // 사용자가 만족했던 카드 구조 복구 (경로 `./` 제거 및 절대 경로 느낌의 상대 경로 시도)
         card.innerHTML = `
             <div class="recipe-img">
-                <img src="./assets/images/recipebook.png" alt="Recipe" 
+                <img src="assets/images/recipebook.png" alt="Recipe" 
                      style="width: 100px; height: 100px; object-fit: contain;"
-                     onerror="this.parentElement.innerHTML='🥘'; this.parentElement.style.fontSize='5rem';">
+                     onerror="this.style.display='none'; this.parentElement.innerText='🥘'; this.parentElement.style.fontSize='5rem';">
             </div>
             <div class="recipe-info">
                 <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; color: var(--primary-dark);">${title}</h3>
