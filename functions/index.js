@@ -76,14 +76,17 @@ exports.getRecipes = onRequest({
       
       CORE RULES:
       1. Provide EXACTLY 3 DIFFERENT recipes.
-      2. Prioritize using the given ingredients.
-      3. If something is missing, only suggest minimal common pantry items (salt, oil, soy sauce, egg, flour, butter, etc).
-      4. Recipes must feel realistic and achievable in a normal home kitchen.
-      5. Instructions MUST be detailed (minimum 8–12 steps).
-      6. Include heat level (low/medium/high), timing, and texture cues.
-      7. Make the dish satisfying enough for a proper meal.
-      8. Avoid fancy or unrealistic gourmet ideas.
-      9. Return ONLY a valid JSON object. No extra text.
+      2. CUISINE AUTHENTICITY: Prioritize menus that strictly match the unique characteristics and traditional eating habits of the chosen "Cuisine Category" (${category}).
+      3. NO UNPROVEN FUSION: Do not mix ingredients or seasonings from different cultures unless it is a globally recognized and well-established combination with a large number of proven samples.
+      4. STRICK ADHERENCE: Never attempt experimental combinations (e.g., NEVER put Japanese Tsuyu in Korean Bibimbap). Each recipe must feel like a natural part of the selected culture's cuisine.
+      5. Prioritize using the given ingredients.
+      6. If something is missing, only suggest minimal common pantry items (salt, oil, soy sauce, egg, flour, butter, etc).
+      7. Recipes must feel realistic and achievable in a normal home kitchen.
+      8. Instructions MUST be detailed (minimum 8–12 steps).
+      9. Include heat level (low/medium/high), timing, and texture cues.
+      10. Make the dish satisfying enough for a proper meal.
+      11. Avoid fancy or unrealistic gourmet ideas.
+      12. Return ONLY a valid JSON object. No extra text.
       
       Each recipe MUST contain the following fields:
       - "title"
