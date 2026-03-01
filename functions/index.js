@@ -64,63 +64,84 @@ exports.getRecipes = onRequest({
       messages: [
         {
           role: "system",
-          content: `You are a world-class Michelin chef.
-          STRICT RULES:
-          1. Output must be in ${strategy.label}. ${strategy.constraint}
-          2. Always provide EXACTLY 3 DIFFERENT recipes that best match the given cuisine and ingredients.
-          3. Even if ingredients are insufficient, suggest the most relevant dishes and mention why they are recommended.
-          4. Return ONLY a valid JSON object.
-          5. Each recipe object must have "title", "reason", "essential_ingredients" (array of amount+name), "optional_ingredients" (array), and "instructions" (string).`
+          content: `You are a practical home-cooking expert specialized in "leftover fridge rescue" meals.
+      
+      APP CONCEPT:
+      This app helps users cook satisfying meals using random leftover ingredients from their fridge.
+      The focus is realistic, resourceful, and delicious home cooking — NOT gourmet restaurant food.
+      
+      LANGUAGE RULE:
+      You MUST respond entirely in ${strategy.label}.
+      ${strategy.constraint}
+      
+      CORE RULES:
+      1. Provide EXACTLY 3 DIFFERENT recipes.
+      2. Prioritize using the given ingredients.
+      3. If something is missing, only suggest minimal common pantry items (salt, oil, soy sauce, egg, flour, butter, etc).
+      4. Recipes must feel realistic and achievable in a normal home kitchen.
+      5. Instructions MUST be detailed (minimum 8–12 steps).
+      6. Include heat level (low/medium/high), timing, and texture cues.
+      7. Make the dish satisfying enough for a proper meal.
+      8. Avoid fancy or unrealistic gourmet ideas.
+      9. Return ONLY a valid JSON object. No extra text.
+      
+      Each recipe MUST contain the following fields:
+      - "title"
+      - "concept"
+      - "reason"
+      - "difficulty" (Easy or Normal)
+      - "servings"
+      - "cooking_time"
+      - "taste_profile"
+      - "essential_ingredients" (array of "amount + ingredient")
+      - "minimal_extra_ingredients" (array of very common pantry items only)
+      - "instructions" (8–12 detailed steps as one string separated by \n)
+      - "upgrade_tip" (one simple extra ingredient that makes it 2x better)`
         },
         {
           role: "user",
           content: `Cuisine Category: ${category}
-          Available Ingredients: ${Array.isArray(ingredients) ? ingredients.join(', ') : ingredients}
-          
-          Return JSON format: 
+      Available Ingredients: ${Array.isArray(ingredients) ? ingredients.join(', ') : ingredients}
+      
+      Return a JSON object in this structure:
+      
+      {
+        "recipes": [
           {
-            "recipes": [
-              {
-                "title": "Recipe Name 1",
-                "reason": "Expert recommendation reason",
-                "essential_ingredients": ["Ingredient 1 with amount", "Ingredient 2 with amount"],
-                "optional_ingredients": ["Optional ingredient 1", "Optional ingredient 2"],
-                "instructions": "Step-by-step cooking guide..."
-              },
-              {
-                "title": "Recipe Name 2",
-                "reason": "Expert recommendation reason",
-                "essential_ingredients": ["Ingredient 1", "Ingredient 2"],
-                "optional_ingredients": [],
-                "instructions": "Step-by-step cooking guide..."
-              },
-              {
-                "title": "Recipe Name 3",
-                "reason": "Expert recommendation reason",
-                "essential_ingredients": ["Ingredient 1", "Ingredient 2"],
-                "optional_ingredients": [],
-                "instructions": "Step-by-step cooking guide..."
-              }
-            ]
-          }`
+            "title": "...",
+            "concept": "...",
+            "reason": "...",
+            "difficulty": "Easy or Normal",
+            "servings": "...",
+            "cooking_time": "...",
+            "taste_profile": "...",
+            "essential_ingredients": ["amount + ingredient"],
+            "minimal_extra_ingredients": ["common pantry item"],
+            "instructions": "1. ...\\n2. ...\\n3. ...",
+            "upgrade_tip": "..."
+          }
+        ]
+      }
+      
+      IMPORTANT:
+      - Provide EXACTLY 3 recipes.
+      - No explanations outside JSON.
+      - Do not include markdown.
+      - Do not include backticks.`
         }
       ],
       response_format: { type: "json_object" },
-      temperature: 0.7,
+      temperature: 0.85,
     });
 
-    let resultData = JSON.parse(completion.choices[0].message.content);
+    let resultData;
 
-    if (resultData.recipes && Array.isArray(resultData.recipes)) {
-      resultData.recipes = resultData.recipes.map(recipe => {
-        const keyword = recipe.title + strategy.suffix;
-        return {
-          ...recipe,
-          youtube_search_link: `https://www.youtube.com/results?search_query=${encodeURIComponent(keyword)}`,
-          google_search_keyword: keyword
-        };
-      });
-    }
+try {
+  resultData = JSON.parse(completion.choices[0].message.content);
+} catch (e) {
+  logger.error("Invalid JSON from AI");
+  return res.status(500).json({ data: { error: "AI response format error" }});
+}
 
     res.status(200).json({ data: resultData });
 

@@ -1,5 +1,8 @@
 {
-  "dependencies": {
-    "openai": "^6.25.0"
+  "name": "projectt",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "firebase deploy"
   }
 }
