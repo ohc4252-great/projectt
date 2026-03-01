@@ -152,7 +152,7 @@ header h1 {
 .cuisine-card {
     background: white;
     border-radius: var(--radius-md);
-    padding: 43px 14px;
+    padding: 20px 10px;
     cursor: pointer;
     box-shadow: var(--shadow-soft);
     border: 1px solid rgba(0,0,0,0.03);
@@ -172,7 +172,7 @@ header h1 {
     width: 12.8rem;
     height: 12.8rem;
     object-fit: contain;
-    margin-bottom: 36px;
+    margin-bottom: 12px;
     display: block;
 }
 
