@@ -16,94 +16,92 @@ const openai = new OpenAI({
 /**
  * [Language Strategy Database]
  */
-const LANGUAGE_DATABASE = {
+const LANGUAGE_STRATEGY = {
   ko: {
-    name: "Korean",
-    instruction: "모든 답변(title, reason, ingredients_needed)은 반드시 한국어(Korean)로만 작성하세요.",
-    search_suffix: " 황금레시피"
+    label: "Korean",
+    constraint: "모든 텍스트(제목, 사유, 재료)는 반드시 한국어(Korean)로만 출력하세요.",
+    suffix: " 황금레시피"
   },
   en: {
-    name: "English",
-    instruction: "ALL fields (title, reason, ingredients_needed) MUST be written in ENGLISH. Do NOT use any Korean characters. Even if the input ingredients are in Korean, you MUST translate them into English for the output.",
-    search_suffix: " Recipe"
+    label: "English",
+    constraint: "FORBIDDEN: DO NOT USE KOREAN CHARACTERS. ALL output MUST be in English. Even if the user provides ingredients in Korean, you MUST translate them and provide the recipe title, reason, and ingredients in English only. (e.g., 'Yangnyeom Chicken' -> 'Korean Fried Chicken')",
+    suffix: " Recipe"
   }
 };
 
-exports.getRecipes = onRequest({ cors: true, maxInstances: 10 }, async (req, res) => {
+exports.getRecipes = onRequest({ cors: true, timeoutSeconds: 60, maxInstances: 10 }, async (req, res) => {
   if (req.method !== "POST") {
     res.status(405).send("Method Not Allowed");
     return;
   }
 
-  // 데이터 추출 (Firebase SDK 또는 직접 fetch 대응)
+  // 데이터 추출 및 구조 정규화
   const body = req.body.data || req.body;
-  
-  // 클라이언트에서 보낸 lang 값을 명확히 파악
-  const selectedLang = body.lang === 'en' ? 'en' : 'ko';
-  const langConfig = LANGUAGE_DATABASE[selectedLang];
-
-  const { ingredients, category } = body;
+  const { ingredients, category, lang = 'ko' } = body;
+  const strategy = LANGUAGE_STRATEGY[lang] || LANGUAGE_STRATEGY.ko;
 
   if (!ingredients || !category) {
-    res.status(400).json({ data: { error: "Missing ingredients or category" } });
+    res.status(400).json({ data: { error: "Missing required fields" } });
     return;
   }
 
   try {
-    logger.info(`Processing request in ${langConfig.name}`);
+    logger.info(`Request for ${strategy.label} - Category: ${category}`);
+
+    const systemMessage = `You are a professional chef. 
+STRICT LANGUAGE RULE: ${strategy.constraint}
+
+[TASK]
+Recommend 3 actual, verified recipes based on the user's ingredients.
+1. Return ONLY a valid JSON object.
+2. NO person names in titles.
+3. NO cooking instructions.
+4. If a recipe is traditionally from another culture, provide its name in ${strategy.label}.
+
+[JSON FORMAT]
+{
+  "recipes": [
+    {
+      "title": "Recipe Name in ${strategy.label}",
+      "reason": "1-sentence reason why it matches these ingredients (in ${strategy.label})",
+      "ingredients_needed": ["Essential ingredients in ${strategy.label}"]
+    }
+  ]
+}`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        {
-          role: "system",
-          content: `CRITICAL RULE: ${langConfig.instruction}
-          
-You are a world-class chef. Recommend 3 menus based on the provided ingredients.
-1. NEVER explain the cooking steps.
-2. Provide ONLY a JSON object.
-3. No person names in titles.
-4. If the user provided ingredients in a different language, TRANSLATE them to ${langConfig.name} first before processing.`
-        },
-        {
-          role: "user",
-          content: `Cuisine Style: ${category}
-Ingredients: ${Array.isArray(ingredients) ? ingredients.join(', ') : ingredients}
-
-Response Format:
-{
-  "recipes": [
-    {
-      "title": "Menu name in ${langConfig.name}",
-      "reason": "Why this dish? (in ${langConfig.name})",
-      "ingredients_needed": ["List of ingredients in ${langConfig.name}"]
-    }
-  ]
-}`
+        { role: "system", content: systemMessage },
+        { 
+          role: "user", 
+          content: `Cuisine Type: ${category}\nAvailable Ingredients: ${Array.isArray(ingredients) ? ingredients.join(', ') : ingredients}\nProvide 3 recipes entirely in ${strategy.label}.` 
         }
       ],
       response_format: { type: "json_object" },
-      temperature: 0.3, // 더 일관된 답변을 위해 온도를 낮춤
+      temperature: 0, // 결과의 일관성을 위해 0으로 설정
     });
 
-    let content = JSON.parse(completion.choices[0].message.content);
-    
-    // 유튜브/구글 링크 및 키워드 후처리 (서버에서 제어)
-    if (content.recipes && Array.isArray(content.recipes)) {
-      content.recipes = content.recipes.map(recipe => {
-        const queryTerm = recipe.title + langConfig.search_suffix;
+    let resultData = JSON.parse(completion.choices[0].message.content);
+
+    // 검색 키워드 및 링크 생성
+    if (resultData.recipes && Array.isArray(resultData.recipes)) {
+      resultData.recipes = resultData.recipes.map(recipe => {
+        const keyword = recipe.title + strategy.suffix;
         return {
           ...recipe,
-          youtube_search_link: `https://www.youtube.com/results?search_query=${encodeURIComponent(queryTerm)}`,
-          google_search_keyword: queryTerm
+          youtube_search_link: `https://www.youtube.com/results?search_query=${encodeURIComponent(keyword)}`,
+          google_search_keyword: keyword
         };
       });
     }
 
-    res.status(200).json({ data: content });
+    res.status(200).json({ data: resultData });
 
   } catch (error) {
-    logger.error("OpenAI Error:", error);
-    res.status(500).json({ data: { error: error.message } });
+    logger.error("API Error:", error);
+    res.status(500).json({ 
+      data: { error: "Failed to fetch recipes", details: error.message } 
+    });
   }
 });

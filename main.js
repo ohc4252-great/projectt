@@ -1,5 +1,12 @@
-import { RECIPES, DEFAULT_INGREDIENTS } from './recipes.js';
 import { translations } from './translations.js';
+
+/**
+ * 기본 재료 데이터 (recipes.js가 삭제되었으므로 필요한 최소 데이터만 정의)
+ */
+const DEFAULT_INGREDIENTS = {
+    ko: { korean: ["고추장", "간장"], japanese: ["미소", "간장"], chinese: ["굴소스", "식용유"], western: ["올리브유", "소금"] },
+    en: { korean: ["Gochujang", "Soy Sauce"], japanese: ["Miso", "Soy Sauce"], chinese: ["Oyster Sauce", "Oil"], western: ["Olive Oil", "Salt"] }
+};
 
 // State Management
 let state = {
@@ -19,6 +26,7 @@ const sections = {
 // Functions
 function applyTranslations() {
     const t = translations[state.lang];
+    if (!t) return;
     
     document.querySelectorAll('.app-name').forEach(el => el.textContent = t.appName);
     document.getElementById('tagline').textContent = t.tagline;
@@ -54,8 +62,11 @@ function applyTranslations() {
 }
 
 function navigateTo(stepId) {
-    Object.values(sections).forEach(section => section.classList.remove('active'));
-    document.getElementById(stepId).classList.add('active');
+    Object.values(sections).forEach(section => {
+        if (section) section.classList.remove('active');
+    });
+    const target = document.getElementById(stepId);
+    if (target) target.classList.add('active');
     
     document.body.className = '';
     if (stepId === 'ingredient-section') document.body.classList.add('step-2');
@@ -70,7 +81,8 @@ function updateIngredientTags() {
     if (!container) return;
     container.innerHTML = '';
     const t = translations[state.lang];
-    const defaults = DEFAULT_INGREDIENTS[state.lang][state.selectedCuisine] || [];
+    
+    const defaults = (DEFAULT_INGREDIENTS[state.lang] && DEFAULT_INGREDIENTS[state.lang][state.selectedCuisine]) || [];
 
     state.ingredients.forEach((ing, index) => {
         const isDefault = defaults.some(d => ing.toLowerCase().includes(d.toLowerCase()) || d.toLowerCase().includes(ing.toLowerCase()));
@@ -89,7 +101,6 @@ function addIngredient() {
     const input = document.getElementById('ingredient-input');
     const value = input.value.trim();
     
-    // 재료 개수 제한 (최대 30개)
     if (state.ingredients.length >= 30) {
         alert(state.lang === 'ko' ? '재료는 최대 30개까지만 입력할 수 있습니다.' : 'You can add up to 30 ingredients.');
         return;
@@ -120,30 +131,27 @@ async function findRecipes() {
     navigateTo('recipe-section');
 
     try {
-        // 최신 배포된 Backend URL
         const response = await fetch('https://us-central1-fridge-raider-bc871.cloudfunctions.net/getRecipes', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 ingredients: state.ingredients,
                 category: state.selectedCuisine,
-                lang: state.lang
+                lang: state.lang 
             })
         });
 
         const result = await response.json();
+        const recipes = result.data ? (result.data.recipes || []) : (result.recipes || []);
         
-        // Firebase Functions v2 응답은 { data: { recipes: [...] } } 구조임
-        if (result.data && result.data.recipes) {
-            renderRecipes(result.data.recipes);
+        if (recipes.length > 0) {
+            renderRecipes(recipes);
         } else {
-            throw new Error('AI Response Error');
+            throw new Error('No recipes found');
         }
     } catch (error) {
         console.error("AI Error:", error);
-        // 에러 발생 시 로컬 더미 데이터 사용 (fallback)
-        const filtered = RECIPES.filter(recipe => recipe.cuisine === state.selectedCuisine);
-        renderRecipes(filtered);
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px; font-weight: 600;">${t.noRecipe}</p>`;
     }
 }
 
@@ -152,15 +160,9 @@ function renderRecipes(recipes) {
     grid.innerHTML = '';
     const t = translations[state.lang];
 
-    if (!recipes || recipes.length === 0) {
-        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px; font-weight: 600;">${t.noRecipe}</p>`;
-        return;
-    }
-
     recipes.forEach(recipe => {
         const card = document.createElement('div');
         card.className = 'recipe-card';
-        
         const title = recipe.title || recipe.name || '';
         const reason = recipe.reason || '';
 
@@ -195,19 +197,16 @@ function showRecipeDetail(recipe) {
     body.innerHTML = `
         <div style="padding: 20px;">
             <h2 style="font-size: 1.8rem; margin-bottom: 15px; font-weight: 800; color: var(--primary-dark);">🥘 ${title}</h2>
-            
             <p style="background: var(--accent); padding: 15px 20px; border-radius: 16px; margin-bottom: 25px; font-weight: 600; color: oklch(0.3 0.1 60); line-height: 1.6;">
                 <span style="display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; opacity: 0.7;">${t.recommendReason}</span>
                 ${reason}
             </p>
-
             <div style="background: oklch(0.98 0.01 100); padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.05);">
                 <h4 style="margin-bottom: 15px; font-size: 1.1rem; font-weight: 800; color: var(--primary-dark);">${t.ingredientsTitle}</h4>
                 <div style="display: flex; flex-wrap: wrap; gap: 8px;">
                     ${ingredients.map(ing => `<span style="padding: 6px 12px; border-radius: 50px; font-size: 0.9rem; background: white; color: #444; border: 1px solid rgba(0,0,0,0.05); font-weight: 600;">${ing}</span>`).join('')}
                 </div>
             </div>
-
             <div class="search-actions" style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
                 <a href="${youtubeLink}" target="_blank" class="youtube-btn" style="text-decoration: none;">
                     <span style="font-size: 1.2rem;">📺</span> ${t.youtubeBtn}
@@ -223,24 +222,29 @@ function showRecipeDetail(recipe) {
 
 // Event Listeners Initialization
 function initEventListeners() {
-    document.getElementById('lang-toggle').addEventListener('click', () => {
-        state.lang = state.lang === 'ko' ? 'en' : 'ko';
-        localStorage.setItem('lang', state.lang);
-        // Clear ingredients when switching language to avoid mixed-language processing
-        state.ingredients = [];
-        applyTranslations();
-    });
+    const langToggle = document.getElementById('lang-toggle');
+    if (langToggle) {
+        langToggle.addEventListener('click', () => {
+            state.lang = state.lang === 'ko' ? 'en' : 'ko';
+            localStorage.setItem('lang', state.lang);
+            state.ingredients = []; // 언어 전환 시 재료 초기화
+            applyTranslations();
+        });
+    }
 
     document.querySelectorAll('.cuisine-card').forEach(card => {
         card.addEventListener('click', () => {
             state.selectedCuisine = card.dataset.cuisine;
-            state.ingredients = [...(DEFAULT_INGREDIENTS[state.lang][state.selectedCuisine] || [])];
+            const defaults = (DEFAULT_INGREDIENTS[state.lang] && DEFAULT_INGREDIENTS[state.lang][state.selectedCuisine]) || [];
+            state.ingredients = [...defaults];
             applyTranslations();
             navigateTo('ingredient-section');
         });
     });
 
-    document.getElementById('add-ingredient-btn').addEventListener('click', addIngredient);
+    const addBtn = document.getElementById('add-ingredient-btn');
+    if (addBtn) addBtn.addEventListener('click', addIngredient);
+
     const ingredientInput = document.getElementById('ingredient-input');
     if (ingredientInput) {
         ingredientInput.addEventListener('keypress', (e) => {
@@ -248,31 +252,41 @@ function initEventListeners() {
         });
     }
 
-    document.getElementById('ingredient-tags').addEventListener('click', (e) => {
-        if (e.target.classList.contains('remove')) {
-            const index = e.target.dataset.index;
-            state.ingredients.splice(index, 1);
+    const tagContainer = document.getElementById('ingredient-tags');
+    if (tagContainer) {
+        tagContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove')) {
+                const index = e.target.dataset.index;
+                state.ingredients.splice(index, 1);
+                updateIngredientTags();
+            }
+        });
+    }
+
+    const findBtn = document.getElementById('find-recipe-btn');
+    if (findBtn) findBtn.addEventListener('click', findRecipes);
+
+    const backBtn = document.getElementById('back-to-cuisine');
+    if (backBtn) backBtn.addEventListener('click', () => navigateTo('cuisine-section'));
+
+    const restartBtn = document.getElementById('restart-btn');
+    if (restartBtn) {
+        restartBtn.addEventListener('click', () => {
+            state.ingredients = [];
+            state.selectedCuisine = '';
             updateIngredientTags();
-        }
-    });
-
-    document.getElementById('find-recipe-btn').addEventListener('click', findRecipes);
-    document.getElementById('back-to-cuisine').addEventListener('click', () => {
-        navigateTo('cuisine-section');
-    });
-
-    document.getElementById('restart-btn').addEventListener('click', () => {
-        state.ingredients = [];
-        state.selectedCuisine = '';
-        updateIngredientTags();
-        navigateTo('cuisine-section');
-    });
+            navigateTo('cuisine-section');
+        });
+    }
 
     const modal = document.getElementById('recipe-modal');
-    document.getElementById('close-modal').addEventListener('click', () => modal.close());
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.close();
-    });
+    const closeModal = document.getElementById('close-modal');
+    if (closeModal) closeModal.addEventListener('click', () => modal.close());
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.close();
+        });
+    }
 }
 
 // Initialize
