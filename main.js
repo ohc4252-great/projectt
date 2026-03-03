@@ -336,9 +336,25 @@ function initEventListeners() {
             const defaults = (DEFAULT_INGREDIENTS[state.lang] && DEFAULT_INGREDIENTS[state.lang][state.selectedCuisine]) || [];
             state.ingredients = [...defaults];
             applyTranslations();
-            navigateTo('ingredient-section');
+            
+            // 가이드 오버레이 표시
+            const guideOverlay = document.getElementById('guide-overlay');
+            if (guideOverlay) {
+                guideOverlay.style.display = 'flex';
+            } else {
+                navigateTo('ingredient-section');
+            }
         });
     });
+
+    const closeGuideBtn = document.getElementById('close-guide-btn');
+    if (closeGuideBtn) {
+        closeGuideBtn.addEventListener('click', () => {
+            const guideOverlay = document.getElementById('guide-overlay');
+            if (guideOverlay) guideOverlay.style.display = 'none';
+            navigateTo('ingredient-section');
+        });
+    }
 
     const addBtn = document.getElementById('add-ingredient-btn');
     if (addBtn) addBtn.addEventListener('click', addIngredient);
