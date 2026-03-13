@@ -234,9 +234,6 @@ function showRecipeDetail(recipe) {
     const title = recipe.title || recipe.name || '';
     const concept = recipe.concept || '';
     const reason = recipe.reason || '';
-    const difficulty = recipe.difficulty || 'Normal';
-    // 조리 시간 데이터 매칭 로직 강화 (Snake Case, Camel Case, 단순 Time 필드 모두 확인)
-    const cookingTime = recipe.cooking_time || recipe.cookingTime || recipe.time || (state.lang === 'ko' ? '시간 정보 없음' : 'No time info');
     const servings = recipe.servings || '1';
     const upgradeTip = recipe.upgrade_tip || '';
     
@@ -245,9 +242,10 @@ function showRecipeDetail(recipe) {
     const minimalExtra = recipe.minimal_extra_ingredients || recipe.optional_ingredients || [];
     let instructions = recipe.instructions || '';
     
-    // 요리 순서 줄바꿈 보정: "1.", "Step", "단계" 등으로 시작하는 부분 앞에 줄바꿈 추가
+    // 요리 순서 줄바꿈 보정: "STEP \n 1" 처럼 깨진 부분을 합치고, 각 스텝 앞에 줄바꿈을 넣습니다.
     if (typeof instructions === 'string') {
-        instructions = instructions.replace(/([^\n])(\d+\. |Step \d+:?|단계 \d+:?)/g, '$1\n$2');
+        instructions = instructions.replace(/(Step|단계|STEP)\s*\n+\s*(\d+)/gi, '$1 $2');
+        instructions = instructions.replace(/([^\n])(\d+\. |Step \d+:?|STEP \d+:?|단계 \d+:?)/g, '$1\n\n$2');
     }
     
     // 유튜브/구글 검색 링크 동적 생성 (기존 버튼 유지 목적)
@@ -259,9 +257,6 @@ function showRecipeDetail(recipe) {
         <div style="padding: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                 <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--primary-dark); flex: 1;">🥘 ${title}</h2>
-                <div style="display: flex; gap: 8px;">
-                    <span class="badge difficulty">${difficulty}</span>
-                </div>
             </div>
             
             <p style="font-size: 1.1rem; color: #555; font-weight: 700; margin-bottom: 10px; border-left: 4px solid var(--accent); padding-left: 12px;">"${concept}"</p>
@@ -271,14 +266,10 @@ function showRecipeDetail(recipe) {
                 ${reason}
             </p>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                <div style="background: oklch(0.98 0.01 100); padding: 15px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05);">
+            <div style="margin-bottom: 20px;">
+                <div style="background: oklch(0.98 0.01 100); padding: 15px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); display: inline-block;">
                     <span style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">${t.servingsLabel || '인분'}</span>
                     <span style="font-weight:700; color:var(--primary-dark);">${servings}</span>
-                </div>
-                <div style="background: oklch(0.98 0.01 100); padding: 15px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05);">
-                    <span style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">${t.timeLabel || '소요 시간'}</span>
-                    <span style="font-weight:700; color: #333;">⏱️ ${cookingTime}</span>
                 </div>
             </div>
 
