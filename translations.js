@@ -37,28 +37,38 @@ export const translations = {
             chinese: "중식",
             western: "양식"
         },
+        
+        // SEO Section (Home)
+        seoTitle1: "냉장고 파먹기로 시작하는 제로 웨이스트 라이프",
+        seoDesc1: "매일 버려지는 식재료로 고민하시나요? '냉장고 털기'는 여러분의 냉장고 속에 잠들어 있는 자투리 채소와 고기, 소스들을 활용해 근사한 한 끼 식사를 만들어주는 스마트 레시피 추천 서비스입니다. 환경을 보호하는 동시에 식비까지 절약할 수 있는 일석이조의 효과를 누려보세요. 지금 바로 냉장고 문을 열고 남은 재료들을 입력해 보세요!",
+        seoTitle2: "왜 냉장고 털기를 사용해야 할까요?",
+        seoDesc2: "우리는 바쁜 일상 속에서 매일 '오늘 뭐 먹지?'라는 고민을 합니다. 배달 음식을 시켜 먹거나 외식을 하는 것도 좋지만, 냉장고 속 식재료를 활용하면 건강하고 경제적인 식사를 즐길 수 있습니다. 한식, 일식, 중식, 양식 등 다양한 카테고리에서 가장 최적화된 맞춤형 요리법을 인공지능이 즉시 찾아드립니다.",
+        seoTitle3: "초보자도 쉬운 맞춤형 AI 레시피",
+        seoDesc3: "가장 많이 찾는 레시피는 자투리 채소를 활용한 볶음밥이나 파스타, 그리고 남은 고기를 활용한 찌개류입니다. 냉장고 파먹기를 통해 매일 새로운 셰프가 되어보세요. 요리 초보자도 쉽게 따라할 수 있도록 상세한 계량과 조리 순서를 안내해 드립니다. 부족한 재료는 쿠팡이나 마트에서 쉽게 구매할 수 있는 팁까지 제공합니다.",
+
         // About Page
         aboutTitle: "서비스 소개",
-        missionTitle: "우리의 미션",
-        missionText: "'냉장고 털기'를 가장 쉽고 스마트하게. 우리는 버려지는 식재료를 줄이고, 매일 반복되는 \"오늘 뭐 먹지?\"라는 고민을 해결하기 위해 탄생했습니다. 단순한 레시피 제공을 넘어, 당신의 주방을 더욱 경제적이고 즐겁게 만드는 것이 우리의 목표입니다.",
+        missionTitle: "우리의 미션: 제로 웨이스트와 스마트한 주방",
+        missionText: "'냉장고 털기'를 가장 쉽고 스마트하게. 우리는 매일 전 세계에서 무수히 버려지는 식재료를 줄이고, 일상에서 반복되는 \"오늘 뭐 먹지?\"라는 고민을 완벽하게 해결하기 위해 탄생했습니다. 단순한 레시피 제공을 넘어, 당신의 주방을 더욱 경제적이고 친환경적이며 즐겁게 만드는 것이 우리의 궁극적인 목표입니다. 냉장고 속 재료들이 훌륭한 요리로 재탄생하는 마법을 경험해보세요.",
         howItWorksTitle: "어떻게 작동하나요?",
-        step1: "한식, 일식, 중식, 양식 중 선호하는 스타일을 선택합니다.",
-        step2: "현재 냉장고에 남아있는 재료들을 입력합니다.",
-        step3: "인공지능 매칭 알고리즘이 당신의 재료로 만들 수 있는 최적의 요리를 즉시 추천합니다.",
-        valueTitle: "왜 '냉장고 털기'인가요?",
-        valueText: "우리는 단순히 많은 양의 데이터를 나열하지 않습니다. 실제 요리 현장에서 초보자도 실패하지 않도록 '구체적인 상태 묘사'와 '정확한 계량 수치'가 포함된 엄선된 레시피만을 제공합니다. 환경을 생각하는 제로 웨이스트(Zero Waste) 라이프스타일, 냉장고 털기와 함께 시작하세요.",
+        step1: "1. 요리 스타일 선택: 한식, 일식, 중식, 양식 중 오늘 끌리는 선호하는 스타일을 선택합니다. 그날의 기분과 날씨에 맞춰 결정해보세요.",
+        step2: "2. 식재료 입력: 현재 냉장고에 남아있는 자투리 채소, 고기, 소스, 과일 등 모든 재료들을 자유롭게 입력합니다. 사소한 재료라도 좋습니다.",
+        step3: "3. AI 맞춤 추천: 최첨단 인공지능 매칭 알고리즘이 당신의 재료로 당장 만들 수 있는 최적의 요리와 조리법을 즉시 추천해 드립니다. 상세한 과정과 팁까지 함께 제공됩니다.",
+        valueTitle: "왜 '냉장고 털기'를 선택해야 할까요?",
+        valueText: "우리는 단순히 방대한 양의 인터넷 데이터를 무작위로 나열하지 않습니다. 실제 요리 현장에서 초보자도 절대 실패하지 않도록 '구체적인 식재료 상태 묘사'와 '정확한 계량 수치', 그리고 '대체 가능한 식재료 팁'이 포함된 엄선된 레시피만을 제공합니다. 환경을 생각하는 제로 웨이스트(Zero Waste) 라이프스타일, 지금 바로 '냉장고 털기'와 함께 시작하고 지구를 살리는 작은 실천에 동참하세요.",
+
         // Privacy Page
         privacyTitle: "개인정보처리방침",
         privacyDate: "시행일: 2026년 2월 28일",
-        privacyIntro: "본 사이트는 사용자의 개인정보를 소중히 여기며, 관련 법령을 준수합니다.",
-        policy1Title: "개인정보 수집 및 이용",
-        policy1Text: "본 서비스는 별도의 회원가입 절차가 없으며, 이름, 이메일, 연락처 등 사용자를 식별할 수 있는 정보를 직접 수집하지 않습니다. 사용자가 입력하는 재료 데이터는 오직 레시피 매칭을 위한 용도로만 사용되며, 서버에 저장되지 않고 브라우저 종료 시 삭제됩니다.",
-        policy2Title: "쿠키 및 광고 게재",
-        policy2Text: "구글(Google)을 포함한 제3자 제공업체는 쿠키를 사용하여 사용자의 이전 방문 기록을 바탕으로 광고를 게재합니다. 구글의 광고 쿠키를 사용하면 구글과 그 파트너가 본 사이트 및 인터넷상의 다른 사이트 방문 기록을 토대로 사용자에게 맞춤형 광고를 제공할 수 있습니다.",
-        policy3Title: "맞춤형 광고 해제",
-        policy3Text: "사용자는 구글의 '광고 설정' 페이지를 방문하여 맞춤설정 광고 게재를 해제할 수 있습니다. 또는 www.aboutads.info를 방문하여 제3자 제공업체의 맞춤설정 광고용 쿠키 사용을 차단할 수 있습니다.",
-        contactTitle: "문의",
-        contactText: "본 방침이나 서비스 이용에 관한 문의는 richanseon@gmail.com으로 연락 주시기 바랍니다."
+        privacyIntro: "냉장고 털기(이하 '본 사이트')는 사용자의 개인정보를 가장 소중하게 생각하며, 대한민국의 개인정보보호법 및 관련 법령을 철저히 준수합니다. 본 방침을 통해 사용자가 제공하는 정보가 어떻게 취급되는지 상세히 안내해 드립니다.",
+        policy1Title: "1. 개인정보 수집 및 이용",
+        policy1Text: "본 서비스는 사용자의 편의를 위해 별도의 복잡한 회원가입 절차를 요구하지 않습니다. 따라서 이름, 이메일 주소, 전화번호, 주소 등 사용자를 특정하거나 식별할 수 있는 민감한 개인정보를 직접적으로 수집하지 않습니다. 사용자가 서비스 이용 중 입력하는 '냉장고 재료 데이터'는 오직 AI 레시피 매칭 및 결과 제공을 위한 일회성 용도로만 사용됩니다. 이 데이터는 당사의 서버에 영구적으로 저장되지 않으며, 사용자의 브라우저 세션이 종료되거나 탭을 닫는 즉시 완전히 안전하게 삭제됩니다.",
+        policy2Title: "2. 쿠키(Cookie) 및 제3자 광고 게재",
+        policy2Text: "본 사이트는 무료 서비스를 유지하고 양질의 콘텐츠를 제공하기 위해 구글 애드센스(Google AdSense)를 비롯한 제3자 광고 제공업체의 광고를 게재하고 있습니다. 이 과정에서 구글 및 그 파트너사는 '쿠키(Cookie)'라는 작은 텍스트 파일을 사용하여, 사용자가 본 사이트 또는 인터넷 상의 다른 웹사이트를 방문한 과거 기록을 바탕으로 사용자에게 가장 관련성 높고 유용한 맞춤형 광고를 제공할 수 있습니다. 쿠키는 개인을 식별하는 정보를 포함하지 않으며 익명화된 브라우징 데이터만을 수집합니다.",
+        policy3Title: "3. 맞춤형 광고 해제 및 사용자 권리",
+        policy3Text: "사용자는 언제든지 자신의 개인정보 보호 설정을 제어할 권리가 있습니다. 맞춤형 광고를 원하지 않으시는 경우, 구글의 '광고 설정(Google Ads Settings)' 페이지(https://myadcenter.google.com/)를 방문하여 개인 맞춤 광고 게재를 쉽게 비활성화할 수 있습니다. 또한, www.aboutads.info 사이트에 방문하시면 제3자 제공업체가 맞춤설정 광고 목적으로 쿠키를 사용하는 것을 포괄적으로 차단할 수 있습니다. 사용자의 선택은 사이트 이용에 어떠한 불이익도 주지 않습니다.",
+        contactTitle: "4. 개인정보 보호 관련 문의",
+        contactText: "본 개인정보처리방침에 대해 궁금한 점이 있으시거나, 사이트 이용 중 개인정보 보호와 관련된 건의사항이 있으신 경우 언제든지 아래의 이메일로 연락 주시기 바랍니다. 신속하고 성실하게 답변해 드리겠습니다. (이메일: richanseon@gmail.com)"
     },
     en: {
         appName: "Fridge Raider",
@@ -91,27 +101,37 @@ export const translations = {
             chinese: "Chinese",
             western: "Western"
         },
+        
+        // SEO Section (Home)
+        seoTitle1: "Start a Zero Waste Lifestyle with Fridge Raiding",
+        seoDesc1: "Are you tired of throwing away leftover ingredients every day? 'Fridge Raider' is a smart recipe recommendation service that helps you create a wonderful meal using the leftover vegetables, meat, and sauces sleeping in your fridge. Enjoy the dual benefits of protecting the environment and saving on grocery bills.",
+        seoTitle2: "Why should you use Fridge Raider?",
+        seoDesc2: "In our busy lives, we constantly ask ourselves 'What should I eat today?'. While ordering delivery is easy, utilizing ingredients from your fridge allows for a healthy and economical meal. Our AI instantly finds the most optimized personalized recipes across various categories like Korean, Japanese, Chinese, and Western.",
+        seoTitle3: "Custom AI Recipes Easy for Beginners",
+        seoDesc3: "The most popular recipes involve fried rice or pasta using leftover veggies, and stews utilizing remaining meat. Become a new chef every day through fridge raiding. We provide detailed measurements and cooking sequences so even cooking beginners can easily follow along.",
+
         // About Page
         aboutTitle: "About Our Service",
-        missionTitle: "Our Mission",
-        missionText: "Making 'Fridge Raiding' easy and smart. We were born to reduce food waste and solve the daily dilemma of \"What should I eat today?\". Beyond just providing recipes, our goal is to make your kitchen more economical and enjoyable.",
-        howItWorksTitle: "How It Works",
-        step1: "Select your preferred style among Korean, Japanese, Chinese, or Western.",
-        step2: "Enter the ingredients currently left in your fridge.",
-        step3: "Our matching algorithm instantly recommends the best dishes you can make with your ingredients.",
-        valueTitle: "Why Fridge Raider?",
-        valueText: "We don't just list vast amounts of data. We provide only carefully selected recipes that include 'specific state descriptions' and 'precise measurements' so that even beginners won't fail. Start your eco-friendly Zero Waste lifestyle with Fridge Raider.",
+        missionTitle: "Our Mission: Zero Waste and a Smart Kitchen",
+        missionText: "Making 'Fridge Raiding' easy and smart. We were born to reduce the massive amount of food waste discarded globally every day and solve the recurring daily dilemma of \"What should I eat today?\". Beyond just providing simple recipes, our ultimate goal is to make your kitchen more economical, eco-friendly, and enjoyable. Experience the magic of transforming fridge leftovers into fantastic dishes.",
+        howItWorksTitle: "How It Works?",
+        step1: "1. Select Cuisine Style: Choose your preferred style for the day among Korean, Japanese, Chinese, or Western, matching your mood and the weather.",
+        step2: "2. Enter Ingredients: Freely enter all the remaining items in your fridge—leftover veggies, meat, sauces, fruits, etc. Even minor ingredients are welcome.",
+        step3: "3. AI Custom Recommendation: Our cutting-edge AI matching algorithm instantly recommends the best dishes and recipes you can make right now. Detailed steps and tips are included.",
+        valueTitle: "Why choose 'Fridge Raider'?",
+        valueText: "We don't just randomly list vast amounts of internet data. We provide only carefully selected recipes that include 'specific ingredient state descriptions', 'precise measurements', and 'substitutable ingredient tips' so that even beginners won't fail in a real cooking environment. Start your eco-friendly Zero Waste lifestyle with Fridge Raider right now and join the small actions to save the Earth.",
+
         // Privacy Page
         privacyTitle: "Privacy Policy",
         privacyDate: "Effective Date: Feb 28, 2026",
-        privacyIntro: "This site values your privacy and complies with relevant laws.",
-        policy1Title: "Information Collection and Use",
-        policy1Text: "This service does not require registration and does not directly collect identifiable information such as name or email. Ingredient data entered by users is used solely for recipe matching and is not stored on our servers; it is deleted when the browser is closed.",
-        policy2Title: "Cookies and Advertising",
-        policy2Text: "Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to your website or other websites. Google's use of advertising cookies enables it and its partners to serve ads to your users based on their visit to your sites and/or other sites on the Internet.",
-        policy3Title: "Opting Out",
-        policy3Text: "Users may opt out of personalized advertising by visiting Google's Ads Settings. Alternatively, you can opt out of a third-party vendor's use of cookies for personalized advertising by visiting www.aboutads.info.",
-        contactTitle: "Contact",
-        contactText: "For inquiries regarding this policy or the service, please contact us at richanseon@gmail.com"
+        privacyIntro: "Fridge Raider (hereinafter referred to as 'this site') values your personal information most highly and strictly complies with privacy laws and regulations. This policy provides detailed information on how the information you provide is handled.",
+        policy1Title: "1. Information Collection and Use",
+        policy1Text: "For your convenience, this service does not require any complex registration procedures. Therefore, we do not directly collect sensitive personal information that can specify or identify you, such as your name, email address, phone number, or address. The 'fridge ingredient data' you enter while using the service is used purely as a one-time input for AI recipe matching and providing results. This data is not permanently stored on our servers and is completely and securely deleted as soon as your browser session ends or you close the tab.",
+        policy2Title: "2. Cookies and Third-Party Advertising",
+        policy2Text: "To maintain our free service and provide high-quality content, this site displays advertisements from third-party ad providers, including Google AdSense. In this process, Google and its partners use small text files called 'Cookies' to serve the most relevant and useful personalized ads to you based on your past visits to this site or other websites on the Internet. Cookies do not contain personally identifiable information and only collect anonymized browsing data.",
+        policy3Title: "3. Opting Out of Personalized Ads and User Rights",
+        policy3Text: "You have the right to control your privacy settings at any time. If you do not want personalized ads, you can easily disable personalized advertising by visiting Google's 'Ads Settings' page (https://myadcenter.google.com/). Additionally, you can visit www.aboutads.info to comprehensively block third-party providers from using cookies for personalized advertising purposes. Your choice will not cause any disadvantage in using the site.",
+        contactTitle: "4. Privacy Inquiries",
+        contactText: "If you have any questions about this Privacy Policy or any suggestions regarding privacy protection while using the site, please feel free to contact us at the email below. We will respond promptly and sincerely. (Email: richanseon@gmail.com)"
     }
 };

@@ -38,6 +38,14 @@ function applyTranslations() {
     const t = translations[state.lang];
     if (!t) return;
     
+    document.querySelectorAll('[data-t]').forEach(el => {
+        const key = el.getAttribute('data-t');
+        if (t[key]) {
+            if (el.tagName === 'INPUT') el.placeholder = t[key];
+            else el.textContent = t[key];
+        }
+    });
+    
     document.querySelectorAll('.app-name').forEach(el => el.textContent = t.appName);
     document.getElementById('tagline').textContent = t.tagline;
     document.querySelector('#cuisine-section .section-title').textContent = t.step1Title;
