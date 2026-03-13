@@ -8,20 +8,12 @@ const { defineSecret } = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
 const OpenAI = require("openai");
 
-// Secret 명칭 확인 필수: OPENAI_API_KEY
-const openAiKey = defineSecret("OPENAI_API_KEY");
+// 새로운 Secret 명칭 사용: OPENAI_API_KEY_V2
+const openAiKey = defineSecret("OPENAI_API_KEY_V2");
 
 const LANGUAGE_STRATEGY = {
-  ko: {
-    label: "Korean",
-    constraint: "모든 텍스트는 반드시 한국어로 작성하세요.",
-    suffix: " 황금레시피"
-  },
-  en: {
-    label: "English",
-    constraint: "ALL fields MUST be in English. No Korean characters allowed.",
-    suffix: " Recipe"
-  }
+  ko: { label: "Korean", constraint: "Use Korean." },
+  en: { label: "English", constraint: "Use English." }
 };
 
 exports.getRecipes = onRequest({ 
@@ -64,77 +56,36 @@ exports.getRecipes = onRequest({
       messages: [
         {
           role: "system",
-          content: `You are a practical home-cooking expert specialized in "leftover fridge rescue" meals.
-      
-      APP CONCEPT:
-      This app helps users cook satisfying meals using random leftover ingredients from their fridge.
-      The focus is realistic, resourceful, and delicious home cooking — NOT gourmet restaurant food.
-      
-      LANGUAGE RULE:
-      You MUST respond entirely in ${strategy.label}.
-      ${strategy.constraint}
-      
-      CORE RULES:
-      1. Provide EXACTLY 3 DIFFERENT recipes.
-      2. CUISINE AUTHENTICITY: Prioritize menus that strictly match the unique characteristics and traditional eating habits of the chosen "Cuisine Category" (${category}).
-      3. NO UNPROVEN FUSION: Do not mix ingredients or seasonings from different cultures unless it is a globally recognized and well-established combination with a large number of proven samples.
-      4. STRICK ADHERENCE: Never attempt experimental combinations (e.g., NEVER put Japanese Tsuyu in Korean Bibimbap). Each recipe must feel like a natural part of the selected culture's cuisine.
-      5. Prioritize using the given ingredients.
-      6. If something is missing, only suggest minimal common pantry items (salt, oil, soy sauce, egg, flour, butter, etc).
-      7. Recipes must feel realistic and achievable in a normal home kitchen.
-      8. Instructions MUST be detailed (minimum 8–12 steps).
-      9. Include heat level (low/medium/high), timing, and texture cues.
-      10. Make the dish satisfying enough for a proper meal.
-      11. Avoid fancy or unrealistic gourmet ideas.
-      12. Return ONLY a valid JSON object. No extra text.
-      
-      Each recipe MUST contain the following fields:
-      - "title"
-      - "concept"
-      - "reason"
-      - "difficulty" (Easy or Normal)
-      - "servings"
-      - "cooking_time"
-      - "taste_profile"
-      - "essential_ingredients" (array of "amount + ingredient")
-      - "minimal_extra_ingredients" (array of very common pantry items only)
-      - "instructions" (8–12 detailed steps as one string separated by \n)
-      - "upgrade_tip" (one simple extra ingredient that makes it 2x better)`
+          content: `Return EXACTLY 3 REAL, EXISTING recipes using some of the user's ingredients. 
+Do NOT invent combinations. Use well-known, standard recipes matching the category.
+Respond ONLY in JSON. ${strategy.constraint}`
         },
         {
           role: "user",
-          content: `Cuisine Category: ${category}
-      Available Ingredients: ${Array.isArray(ingredients) ? ingredients.join(', ') : ingredients}
-      
-      Return a JSON object in this structure:
-      
-      {
-        "recipes": [
-          {
-            "title": "...",
-            "concept": "...",
-            "reason": "...",
-            "difficulty": "Easy or Normal",
-            "servings": "...",
-            "cooking_time": "...",
-            "taste_profile": "...",
-            "essential_ingredients": ["amount + ingredient"],
-            "minimal_extra_ingredients": ["common pantry item"],
-            "instructions": "1. ...\\n2. ...\\n3. ...",
-            "upgrade_tip": "..."
-          }
-        ]
-      }
-      
-      IMPORTANT:
-      - Provide EXACTLY 3 recipes.
-      - No explanations outside JSON.
-      - Do not include markdown.
-      - Do not include backticks.`
+          content: `Category: ${category}
+Ingredients: ${Array.isArray(ingredients) ? ingredients.join(', ') : ingredients}
+
+Format:
+{
+  "recipes": [
+    {
+      "title": "Real Recipe Name",
+      "concept": "1 short sentence",
+      "reason": "1 short sentence why this fits",
+      "servings": "1",
+      "cooking_time": "15분",
+      "essential_ingredients": ["amt+item"],
+      "minimal_extra_ingredients": ["item"],
+      "instructions": "1. step\\n2. step",
+      "upgrade_tip": "1 short tip"
+    }
+  ]
+}`
         }
       ],
       response_format: { type: "json_object" },
-      temperature: 0.85,
+      temperature: 0.7,
+      max_tokens: 1500
     });
 
     let resultData;
